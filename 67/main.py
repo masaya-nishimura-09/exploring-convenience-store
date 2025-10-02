@@ -288,7 +288,8 @@ def walk(status, file):
             status.pd = next_direction
             status.steps = status.steps + 1
 
-            print(f"({status.x}, {status.y})")
+            if status.show_output:
+                print(f"({status.x}, {status.y})")
             file.write(f"({status.x}, {status.y})\n")
             return status
 
@@ -425,7 +426,8 @@ with open(output_file_name, "a") as file:
     keep_going = True
     while keep_going:
         status = walk(status, file)
-        print(f"Progress: {status.progress}, Steps: {status.steps}")
+        if status.show_output:
+            print(f"Progress: {status.progress}, Steps: {status.steps}")
         if status.progress == item_amount:
             keep_going = False
 status = checkout(status)
