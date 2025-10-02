@@ -130,6 +130,7 @@ def pick_item(status, item_code):
         if status.cart[i] == None:
             status.cart[i] = {
                 "category": item_category,
+                "symbol": item_code,
                 "name": item_name,
                 "price": price,
             }
@@ -437,11 +438,13 @@ shopping_list_text = "Shopping List: "
 for i in shopping_list:
     shopping_list_text += f"{i['name']},  "
 
-# 出力用にカートの中身を文字列に変換
-cart_text = "Visit order: "
+# 出力用にカートの中身を文字列に変換(取得した順)
+cart_text = "Visit order:\n"
+order = 1
 for i in status.cart:
     if i is not None:
-        cart_text += f"{i['name']}: {i['price']}¥ -> "
+        cart_text += f"{order}, {{ Symbol: {i['symbol']}, Name: {i['name']}, Price: {i['price']}¥ }}\n"
+        order += 1
 
 # 出力用に購入した商品を文字列に変換
 items_purchased_text = "Items purchased: "
