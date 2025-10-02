@@ -1,5 +1,12 @@
 .DS_Store
 
 # 出力ファイルは大きいので追跡しない。
+./61/output/*
+./61a/output/*
+./61b/output/*
+./62/output/*
+./63/output/*
+./64/output/*
+./65/output/*
 ./66/output/*
 ./67/output/*
