@@ -5,5 +5,5 @@
   "starting_x": 19,
   "starting_y": 4,
   "prefer_lower_price_items": true,
-  "show_output": true
+  "show_output": false
 }

@@ -32,4 +32,5 @@
 - $ pip install colorgram.py
 - $ ./bash/reset.sh
 - $ ./bash/df_execution.sh
+  (このとき自動で./output 以下を作成)
 - 全て終了後、 $ ./python3 graph.py
