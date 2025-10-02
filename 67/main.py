@@ -467,7 +467,7 @@ if status.show_output:
     for i in range(VERTICAL):
         for j in range(HORIZONTAL):
             print(status.map[i][j], end="")
-    print()
+        print()
     print()
 
 # ファイルに出力
