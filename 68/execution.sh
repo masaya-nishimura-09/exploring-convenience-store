@@ -39,7 +39,7 @@ mkdir -p output/data/3
 
 # 4セット実行
 for j in $(seq 0 3); do
-    for i in $(seq 1000); do
+    for i in $(seq 100); do
         python3 main.py; 
     done
     mv output/tmp_data/* output/data/$j
