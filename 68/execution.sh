@@ -1,0 +1,46 @@
+#!/bin/bash
+
+setup_q_maps() {
+    rm -r input/q
+    mkdir -p input/q
+    for i in $(seq 0 $((ITEM_AMOUNT - 1))); do
+        mkdir -p input/q/$i
+        cp -r input/fresh_q/* input/q/$i
+    done  
+}
+
+# 設定ファイルからバージョンと商品数を取得
+VERSION=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['version'])")
+ITEM_AMOUNT=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['item_amount'])")
+
+# qマップをリセット
+setup_q_maps
+
+# 出力フォルダをリセット
+rm -rf output
+
+# 必要なフォルダを作成
+mkdir -p output/data
+mkdir -p output/tmp_data
+mkdir -p output/data/0
+mkdir -p output/data/1
+mkdir -p output/data/2
+mkdir -p output/data/3
+
+# 4セット実行
+for j in $(seq 0 3); do
+    for i in $(seq 1000); do
+        python3 main.py; sleep 1; done
+    mv output/tmp_data/* output/data/$j
+    setup_q_maps
+done
+
+# 統計情報をまとめる
+touch stats.csv
+python3 graph.py
+
+# 現在の日付を取得
+CURRENT_DATE=$(date +"%Y-%m-%d")
+
+# 出力ファイルを圧縮
+zip -r ${VERSION}_output_${CURRENT_DATE}.zip output
