@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# TODO: 4回の実行を並列処理化する
+
+# 実行回数の定義
+EXECUTION_COUNT=4
+
 # 仮想環境をセットアップ
 rm -rf venv
 python3 -m venv venv
@@ -37,8 +42,8 @@ mkdir -p output/data/1
 mkdir -p output/data/2
 mkdir -p output/data/3
 
-# 4セット実行
-for j in $(seq 0 3); do
+# 複数セット実行
+for j in $(seq 0 $((EXECUTION_COUNT - 1))); do
     for i in $(seq 100); do
         python3 main.py; 
     done
