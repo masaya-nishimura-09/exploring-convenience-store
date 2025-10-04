@@ -1,9 +1,9 @@
 {
   "version": "68",
-  "item_amount": 6,
   "epsilon": 0.01,
   "starting_x": 19,
   "starting_y": 4,
   "prefer_lower_price_items": true,
-  "show_output": true
+  "show_output": true,
+  "title": "Parallel Q update method"
 }

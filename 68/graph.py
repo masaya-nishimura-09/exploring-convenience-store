@@ -1,10 +1,18 @@
+import json
 import matplotlib.pyplot as plt
 import re
 import os
 import csv
 
-PROJECT_NUM = "68"
-TITLE = "Parallel Q update method"
+# 設定ファイルを読み込む
+with open("./config.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
+
+    # コードのバージョンを取得
+    VERSION = data["version"]
+
+    # タイトルを取得
+    TITLE = data["title"]
 
 
 def output_data(directory, name, csv_writer):
@@ -71,5 +79,5 @@ with open("stats.csv", "w", newline="", encoding="utf-8") as f:
     csv_writer.writerow(["Title", "Min", "Max", "Average"])
 
     directory = f"./output/data"
-    name = f"file{PROJECT_NUM}"
+    name = f"file{VERSION}"
     output_data(directory, name, csv_writer)

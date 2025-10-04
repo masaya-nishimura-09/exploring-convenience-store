@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# 仮想環境をセットアップ
+rm -rf venv
+python3 -m venv venv
+source venv/bin/activate
+pip install colorgram.py
+
+# 買い物リストの個数を取得し、config.json を更新
+ITEM_AMOUNT=$(ls -1 ./input/shopping_list | wc -l)
+python3 -c "import json; f='./config.json'; data=json.load(open(f)); data['item_amount']=${ITEM_AMOUNT}; json.dump(data, open(f,'w'), indent=2)"
+
+# 設定ファイルからバージョンを取得
+VERSION=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['version'])")
+
+# qマップを初期化する関数
 setup_q_maps() {
     rm -r input/q
     mkdir -p input/q
@@ -8,16 +22,6 @@ setup_q_maps() {
         cp -r input/fresh_q/* input/q/$i
     done  
 }
-
-# 仮想環境をセットアップ
-rm -rf venv
-python3 -m venv venv
-source venv/bin/activate
-pip install colorgram.py
-
-# 設定ファイルからバージョンと商品数を取得
-VERSION=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['version'])")
-ITEM_AMOUNT=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['item_amount'])")
 
 # qマップをリセット
 setup_q_maps

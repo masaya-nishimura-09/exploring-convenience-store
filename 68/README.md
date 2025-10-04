@@ -6,7 +6,7 @@
 | ---- | ------------------------------------- | ------------- | -------------- | ---------- | -------------------------------------------- |
 | 68   | ATM → 水(2 種類), 弁当(2 種類) → レジ | 並列 Q 更新法 | ε = 0.01, Map1 | 写真で判別 | 最安値商品のみ購入。所持金不足なら購入しない |
 
-## コードの流れ
+## コードの流れ(main.py について)
 
 - input から設定ファイルや q,地図を取得
 - 買い物リストにある商品を全てカゴに入れる。
@@ -15,20 +15,19 @@
 ## 設定ファイルについて(./input/config.json)
 
 - version: このプロジェクトの番号
-- item_amount: ./input/shopping_list 内の写真の枚数
+- item_amount: ./input/shopping_list 内の写真の枚数（実行後に自動作成）
 - epsilon: ε の値
 - starting_x: 開始地点の x 座標
 - starting_y: 開始地点の y 座標
 - prefer_lower_price_items: 各カテゴリの最安値の商品をそれぞれ購入する場合は true、先に見つけたものを購入する場合は false (現時点では true のみ可能)
 - show_output:結果を都度ターミナルに出力するときは true
+- title: 実験の手法
 
 ## 実行方法
 
 - ./input/config.json を正しく設定する。
 - 買い物リスト用の写真の名前は、`カテゴリ名_商品名.jpg` とする。(atm とレジは除く)
-- 買い物リストの写真枚数に合わせて、q を用意する。(./fresh_stock/q と./input/q)
-- $ python3 -m venv venv
-- $ source venv/bin/activate
-- $ pip install colorgram.py
 - $ ./execution.sh
-  (このとき自動で./output 以下を作成)
+
+##　実行後
+全て完了後（execution.sh の中身を全て実行後）、output データをまとめて圧縮したものと、それらの平均をとった stats.csv が作成される。
