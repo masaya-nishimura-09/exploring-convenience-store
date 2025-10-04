@@ -15,7 +15,7 @@ VERSION=$(python3 -c "import json; data=json.load(open('./config.json')); print(
 
 # qマップを初期化する関数
 setup_q_maps() {
-    rm -r input/q
+    rm -rf "input/q"
     mkdir -p input/q
     for i in $(seq 0 $((ITEM_AMOUNT - 1))); do
         mkdir -p input/q/$i

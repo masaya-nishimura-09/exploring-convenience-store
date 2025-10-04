@@ -434,9 +434,9 @@ with open(output_file_name, "a") as file:
 status = checkout(status)
 
 # 出力用に買い物リストのを文字列に変換
-shopping_list_text = "Shopping List: "
+shopping_list_text = "Shopping List:\n"
 for i in shopping_list:
-    shopping_list_text += f"{i['name']},  "
+    shopping_list_text += f"- {i['name']}\n"
 
 # 出力用にカートの中身を文字列に変換(取得した順)
 cart_text = "Visit order:\n"
@@ -447,22 +447,22 @@ for i in status.cart:
         order += 1
 
 # 出力用に購入した商品を文字列に変換
-items_purchased_text = "Items purchased: "
+items_purchased_text = "Items purchased:\n"
 for i in status.items_purchased:
-    items_purchased_text += f"{i['name']}: {i['price']}¥ -> "
+    items_purchased_text += f"{{{i['name']}: {i['price']}¥}}\n"
 
 # ターミナルに出力
 if status.show_output:
-    print(f"\nOutput file name: {date}_{time}.txt")
-    print(f"Epsilon: {epsilon}")
+    print(f"\nOutput file name: {date}_{time}.txt\n")
+    print(f"Epsilon: {epsilon}\n")
     print(shopping_list_text)
     print(cart_text)
     print(items_purchased_text)
-    print(f"Initial money: {status.initial_money}")
-    print(f"Cash balance: {status.cash_balance}")
-    print(f"Is shopping successful?: {status.is_shopping_successful}")
-    print(f"Progress: {status.progress}")
-    print(f"Steps: {status.steps}")
+    print(f"Initial money: {status.initial_money}¥\n")
+    print(f"Cash balance: {status.cash_balance}¥\n")
+    print(f"Is shopping successful?: {status.is_shopping_successful}\n")
+    print(f"Progress: {status.progress}\n")
+    print(f"Steps: {status.steps}\n")
     print(f"Map: ")
     for i in range(VERTICAL):
         for j in range(HORIZONTAL):
@@ -473,11 +473,11 @@ if status.show_output:
 # ファイルに出力
 with open(output_file_name, "a") as file:
     file.write(f"\nEpsilon: {epsilon}\n\n")
-    file.write(f"{shopping_list_text}\n\n")
-    file.write(f"{cart_text}\n\n")
-    file.write(f"{items_purchased_text}\n\n")
-    file.write(f"Initial money: {status.initial_money}\n\n")
-    file.write(f"Cash balance: {status.cash_balance}\n\n")
+    file.write(f"{shopping_list_text}\n")
+    file.write(f"{cart_text}\n")
+    file.write(f"{items_purchased_text}\n")
+    file.write(f"Initial money: {status.initial_money}¥\n\n")
+    file.write(f"Cash balance: {status.cash_balance}¥\n\n")
     file.write(f"Is shopping successful?: {status.is_shopping_successful}\n\n")
     file.write(f"Progress: {status.progress}\n\n")
     file.write(f"Steps: {status.steps}\n\n")

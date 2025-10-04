@@ -5,5 +5,6 @@
   "starting_y": 4,
   "prefer_lower_price_items": true,
   "show_output": true,
-  "title": "Parallel Q update method"
+  "title": "Parallel Q update method",
+  "item_amount": 13
 }
