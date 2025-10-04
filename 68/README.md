@@ -30,7 +30,5 @@
 - $ python3 -m venv venv
 - $ source venv/bin/activate
 - $ pip install colorgram.py
-- $ ./bash/reset.sh
-- $ ./bash/execution.sh
+- $ ./execution.sh
   (このとき自動で./output 以下を作成)
-- 全て終了後、 $ ./python3 graph.py
