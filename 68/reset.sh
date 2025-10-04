@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # qマップをリセット
-rm -r ./input/q
+rm -rf ./input/q
 
 # outputフォルダをリセット
-rm -r ./output
+rm -rf ./output
