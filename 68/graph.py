@@ -74,7 +74,7 @@ def output_data(directory, name, csv_writer):
     csv_writer.writerow([name, min_steps, max_steps, f"{average_steps:.2f}"])
 
 
-with open("stats.csv", "w", newline="", encoding="utf-8") as f:
+with open("./output/stats.csv", "w", newline="", encoding="utf-8") as f:
     csv_writer = csv.writer(f)
     csv_writer.writerow(["Title", "Min", "Max", "Average"])
 

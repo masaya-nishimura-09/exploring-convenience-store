@@ -52,7 +52,7 @@ for j in $(seq 0 $((EXECUTION_COUNT - 1))); do
 done
 
 # 統計情報をまとめる
-touch stats.csv
+touch ./output/stats.csv
 python3 graph.py
 
 # 現在の日付を取得
