@@ -43,8 +43,8 @@ for i in $(seq 0 $((sets - 1))); do
 done  
 
 # 複数セット実行
-for j in $(seq 0 $((num_sets - 1))); do
-    for i in $(seq $(runs_per_set)); do
+for j in $(seq 0 $((sets - 1))); do
+    for i in $(seq 1 $runs_per_set); do
         python3 main.py; 
     done
     mv output/tmp_data/* output/data/$j
