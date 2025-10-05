@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# TODO: 4回の実行を並列処理化する
+# 1セットあたりの実行回数
+runs_per_set=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['runs_per_set'])")
 
-# 実行回数の定義
-EXECUTION_COUNT=4
+# セット数（平均を取る回数）
+sets=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['sets'])")
 
 # 仮想環境をセットアップ
 rm -rf venv
@@ -12,17 +13,17 @@ source venv/bin/activate
 pip install colorgram.py
 
 # 買い物リストの個数を取得し、config.json を更新
-ITEM_AMOUNT=$(ls -1 ./input/shopping_list | wc -l)
-python3 -c "import json; f='./config.json'; data=json.load(open(f)); data['item_amount']=${ITEM_AMOUNT}; json.dump(data, open(f,'w'), indent=2)"
+item_amount=$(ls -1 ./input/shopping_list | wc -l)
+python3 -c "import json; f='./config.json'; data=json.load(open(f)); data['item_amount']=${item_amount}; json.dump(data, open(f,'w'), indent=2)"
 
 # 設定ファイルからバージョンを取得
-VERSION=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['version'])")
+version=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['version'])")
 
 # qマップを初期化する関数
 setup_q_maps() {
     rm -rf "input/q"
     mkdir -p input/q
-    for i in $(seq 0 $((ITEM_AMOUNT - 1))); do
+    for i in $(seq 0 $((item_amount - 1))); do
         mkdir -p input/q/$i
         cp -r input/fresh_q/* input/q/$i
     done  
@@ -37,14 +38,13 @@ rm -rf output
 # 必要なフォルダを作成
 mkdir -p output/data
 mkdir -p output/tmp_data
-mkdir -p output/data/0
-mkdir -p output/data/1
-mkdir -p output/data/2
-mkdir -p output/data/3
+for i in $(seq 0 $((sets - 1))); do
+    mkdir -p output/data/$i
+done  
 
 # 複数セット実行
-for j in $(seq 0 $((EXECUTION_COUNT - 1))); do
-    for i in $(seq 100); do
+for j in $(seq 0 $((num_sets - 1))); do
+    for i in $(seq $(runs_per_set)); do
         python3 main.py; 
     done
     mv output/tmp_data/* output/data/$j
@@ -53,10 +53,10 @@ done
 
 # 統計情報をまとめる
 touch ./output/stats.csv
-python3 graph.py
+python3 write_result.py
 
 # 現在の日付を取得
-CURRENT_DATE=$(date +"%Y-%m-%d")
+current_date=$(date +"%Y-%m-%d")
 
 # 出力ファイルを圧縮
-zip -r ${VERSION}_output_${CURRENT_DATE}.zip output
+zip -r ${version}_output_${current_date}.zip output

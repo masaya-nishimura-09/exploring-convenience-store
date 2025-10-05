@@ -6,5 +6,7 @@
   "prefer_lower_price_items": true,
   "show_output": true,
   "title": "Parallel Q update method",
-  "item_amount": 13
+  "item_amount": 13,
+  "runs_per_set": 100,
+  "sets": 4
 }
