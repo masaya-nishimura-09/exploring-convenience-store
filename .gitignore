@@ -12,3 +12,16 @@
 ./66/output/*
 ./67/output/*
 ./68/output/*
+
+# 実行環境（venv）は追跡しない。
+./61/venv/*
+./61a/venv/*
+./61b/venv/*
+./62/venv/*
+./63/venv/*
+./64/venv/*
+./65/venv/*
+./65/venv/*
+./66/venv/*
+./67/venv/*
+./68/venv/*
