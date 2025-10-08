@@ -67,7 +67,7 @@ with open("./output/stats.csv", "w", newline="", encoding="utf-8") as f:
 
     # CSVのヘッダーを作成
     csv_writer = csv.writer(f)
-    csv_writer.writerow(["Version", "Date", "Runs_per_set", "Sets" "Min", "Max", "Average"])
+    csv_writer.writerow(["Version", "Date", "Runs_per_set", "Sets", "Min", "Max", "Average"])
 
     directory = f"./output/data"
     write_csv(directory, version, date_str, csv_writer, runs_per_set, sets)

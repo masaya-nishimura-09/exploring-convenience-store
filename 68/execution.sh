@@ -57,6 +57,7 @@ python3 write_result.py
 
 # 現在の日付を取得
 current_date=$(date +"%Y-%m-%d")
+current_time=$(date +"%H:%M:%S")
 
 # 出力ファイルを圧縮
-zip -r ${version}_output_${current_date}.zip output
+zip -r ${version}_output_${current_date}_${current_time}.zip output
