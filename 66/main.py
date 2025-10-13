@@ -7,14 +7,23 @@ import json
 
 VERTICAL = 20
 HORIZONTAL = 50
-ITEM_AMOUNT = 4
-CATEGORY_AMOUNT = 3
-VERSION = 66
 color_cache = {}
 
 
 class Status:
-    def __init__(self, x, y, initial_money, shopping_list, cart, finished_categories, epsilon, map, prefer_lower_price_items):
+    def __init__(
+        self,
+        x,
+        y,
+        initial_money,
+        shopping_list,
+        cart,
+        epsilon,
+        q,
+        map,
+        item_amount,
+        show_output,
+    ):
         self.x = x
         self.y = y
         self.d = 0
@@ -28,48 +37,53 @@ class Status:
         self.is_shopping_successful = True
         self.shopping_list = shopping_list
         self.cart = cart
-        self.finished_categories = finished_categories
         self.items_purchased = []
         self.epsilon = epsilon
+        self.q = q
         self.map = map
-        self.prefer_lower_price_items = prefer_lower_price_items
+        self.item_amount = item_amount
+        self.show_output = show_output
 
 
-def price_comparison(status, item, category): # 最安値か判別
-    for s in status.shopping_list[category]:
-        if s['id'] != item['id'] and s['price'] < item['price']: 
-            return False
-    return True
-
-
-# 買い物リストに見つけた商品の価格を記録
-def write_price_list(status, item, category):
-    if category == "atm" or category == "register":
-        return
-    for i in range(len(status.shopping_list[category])):
-        if status.shopping_list[category][i]['id'] == item['id'] and status.shopping_list[category][i]['price'] == 0:
-            status.shopping_list[category][i]['price'] = random_price()
-    return
-
-
+# 会計をし、最安値の商品を購入
 def checkout(status):
-    cart = [item for item in status.cart if item["name"] != "atm.jpg" and item["name"] != "cashier_register.jpg"]
+    cart = [
+        item
+        for item in status.cart
+        if item is not None
+        and item["name"] != "atm.jpg"
+        and item["name"] != "cashier_register.jpg"
+    ]
+
+    # カートの中身を価格順にソート
     sorted_cart = sorted(cart, key=itemgetter("price"))
+
+    # 購入したカテゴリリスト
+    category_done = []
+
+    # 所持金と相談しながら購入
     for item in sorted_cart:
-        if item["price"] <= status.cash_balance:
-            status.items_purchased.append({"name": item["name"], "price": item["price"]})
-            status.cash_balance = status.cash_balance - item["price"]
-        else:
-            status.is_shopping_successful = False
-            break
+        if item["category"] not in category_done:
+            if item["price"] <= status.cash_balance:
+                status.items_purchased.append(
+                    {"name": item["name"], "price": item["price"]}
+                )
+                status.cash_balance = status.cash_balance - item["price"]
+                category_done.append(item["category"])
+            else:
+                status.is_shopping_successful = False
+                break
+
     return status
 
 
+# ランダムな価格を生成
 def random_price():
     price = random.randint(100, 10000)
     return price
 
 
+# 2つのリストが同じか判別(順番も重複も無視)
 def are_same_list(a, b):
     if set(a) == set(b):
         return True
@@ -77,6 +91,7 @@ def are_same_list(a, b):
         return False
 
 
+# 画像の色を取得しリスト化
 def color_picker(path):
     if path in color_cache:
         return color_cache[path]
@@ -90,90 +105,56 @@ def color_picker(path):
 
 
 # 商品をカゴに入れる
-def pick_item(status, item):
-    item_rgb = color_picker(f"./input/item_images/{item}.jpg")
+def pick_item(status, item_code):
+    item_rgb = color_picker(f"./input/item_images/{item_code}.jpg")
     item_id = 0
     item_name = ""
-    item_price = 0
-    category_name = ""
-    is_category_finished = False
+    item_category = ""
 
-    # 商品の詳細を取得
-    found = False
-    for category in status.shopping_list:
-        for item in status.shopping_list[category]:
-            rgb = item['rgb']
-            if are_same_list(rgb, item_rgb):
-                item_id = item['id']
-                item_name = item['name']
-                item_price = item['price']
-                category_name = category
-                found = True
-                break
-        if found:
+    price = 0
+    if item_code == "$" or item_code == "-":
+        price = 0
+    else:
+        price = random_price()
+
+    # 見つけた商品のid、名前、カテゴリを取得
+    for item in status.shopping_list:
+        if are_same_list(item["rgb"], item_rgb):
+            item_id = item["id"]
+            item_name = item["name"]
+            item_category = item["category"]
             break
 
-    # カゴに商品を追加
-    for i in range(ITEM_AMOUNT):
-        if status.cart[i] is None:
-            status.cart[i] = {"id": item_id, "category": category_name, "name": item_name, "price": item_price}
+    # カゴに見つけた商品を入れる
+    for i in range(status.item_amount):
+        if status.cart[i] == None:
+            status.cart[i] = {
+                "category": item_category,
+                "symbol": item_code,
+                "name": item_name,
+                "price": price,
+            }
             break
 
-    # カートの中の同カテゴリの商品数と買い物リストの同カテゴリの商品数を比較
-    cart_count = sum(1 for item in status.cart if item is not None and item["category"] == category_name)
-    shopping_list_count = len(status.shopping_list[category_name])
-    if cart_count == shopping_list_count:
-        is_category_finished = True 
-
-    if is_category_finished == True:
-        # カテゴリを探索終了にする
-        for i in range(ITEM_AMOUNT):
-            if status.finished_categories[i] is None:
-                status.finished_categories[i] = category_name
-                break
-        
     return item_id
 
 
-# そのカテゴリのうち、必要な商品以外を削除
-def delete_items_from_cart(status, item_id):
-    category_name = ""
-    lowest_price = float("inf") # 無限大
-
-    # 1. item_id が属するカテゴリを探す
-    for category in status.shopping_list:
-        for item in status.shopping_list[category]:
-            if item['id'] == item_id:
-                category_name = category
-                break
-        if category_name:
-            break
-    
-    # 2. そのカテゴリで最安の商品を探す
-    for item in status.cart:
-        if item is not None and item["category"] == category_name:
-            if item["price"] < lowest_price:
-                lowest_price = item["price"]
-
-    # 3. カートから最安以外を削除
-    new_cart = []
-    kept = False
-    for item in status.cart:
-        if item is not None and item["category"] == category_name:
-            if item["price"] == lowest_price and not kept:
-                # 1つだけ残す
-                new_cart.append(item)
-                kept = True
-        else:
-            new_cart.append(item)
-    status.cart = new_cart
-
-
 # 商品をかごに入れるべきか判別
-def item_checker(status, item_code): 
+def item_checker(status, item_code):
+    # 対象の商品、atm、レジの色を取得
     item_rgb = color_picker(f"./input/item_images/{item_code}.jpg")
-    atm_rgb = status.shopping_list['atm'][0]['rgb']
-    cashier_rgb = status.shopping_list['register'][0]['rgb']
+
+    atm_rgb = []
+    for item in status.shopping_list:
+        if item["name"] == "atm.jpg":
+            atm_rgb = item["rgb"]
+            break
+
+    cashier_rgb = []
+    for item in status.shopping_list:
+        if item["name"] == "cashier_register.jpg":
+            cashier_rgb = item["rgb"]
+            break
 
     # まだ何も見つけてない　かつ　見つけたものがatmでない時
     if status.progress == 0 and not are_same_list(item_rgb, atm_rgb):
@@ -184,26 +165,18 @@ def item_checker(status, item_code):
         return False
 
     # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
-    if status.progress < CATEGORY_AMOUNT - 1 and are_same_list(item_rgb, cashier_rgb):
+    if status.progress < status.item_amount - 1 and are_same_list(
+        item_rgb, cashier_rgb
+    ):
         return False
-    
-    for category in status.shopping_list:
-        for item in status.shopping_list[category]:
-            rgb = item['rgb']
 
-            if are_same_list(item_rgb, rgb):
-                # もしそのカテゴリの探索が終了していれば無視
-                if any(f is not None and category == f for f in status.finished_categories):
-                    return False
-                
-                # もしその商品が買い物かごにあれば無視
-                if any(c is not None and item["name"] == c["name"] for c in status.cart): 
-                    return False
-                
-                # もし同カテゴリ内で最も安い商品を選ぶ場合
-                if status.prefer_lower_price_items:
-                    write_price_list(status, item, category)
-                return True
+    # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
+    for s in status.shopping_list:
+        if are_same_list(item_rgb, s["rgb"]):
+            item_name = s["name"]
+            if any(c is not None and item_name == c["name"] for c in status.cart):
+                return False
+            return True
 
     return False
 
@@ -217,58 +190,50 @@ def item_picked_checker(item, cart):
     return False
 
 
-# そのカテゴリーの探索を終了するべきか判別
-def category_finished_checker(status, item_id):
-    category_name = ""
-    found = False
-    for category in status.shopping_list:
-        for item in status.shopping_list[category]:
-            if item['id'] == item_id:
-                category_name = category
-                found = True
-                break
-        if found:
-            break
-    
-    for category in status.finished_categories:
-        if category == category_name:
-            return True
-    return False
-
-
 # Qマップを比較し、次の方向を決める
 def q_comparison(status, next_direction):
     direction = next_direction
     value = 0
 
+    # 買い物リストからatmとレジのidを取得
+    atm_index = 0
+    for item in status.shopping_list:
+        if item["name"] == "atm.jpg":
+            atm_index = item["id"]
+            break
+
+    cashier_register_index = 0
+    for item in status.shopping_list:
+        if item["name"] == "cashier_register.jpg":
+            cashier_register_index = item["id"]
+            break
+
     # まだatmを探している時
     if status.progress == 0:
         for i in range(4):
-            if value < status.shopping_list["atm"][0]["q"][i][status.x][status.y]:
-                value = status.shopping_list["atm"][0]["q"][i][status.x][status.y]
+            if value < status.q[atm_index][i][status.x][status.y]:
+                value = status.q[atm_index][i][status.x][status.y]
                 direction = i
 
     # レジを探している時
-    elif status.progress == CATEGORY_AMOUNT - 1:
+    elif status.progress == status.item_amount - 1:
         for i in range(4):
-            if value < status.shopping_list["register"][0]["q"][i][status.x][status.y]:
-                value = status.shopping_list["register"][0]["q"][i][status.x][status.y]
+            if value < status.q[cashier_register_index][i][status.x][status.y]:
+                value = status.q[cashier_register_index][i][status.x][status.y]
                 direction = i
 
     # 商品を探している時
     else:
-        for category in status.shopping_list:
-            if category != "atm" and category != "register":
-                is_item_picked = any(
-                    item_picked_checker(item['name'], status.cart) 
-                    for item in status.shopping_list[category]
+        for i in range(status.item_amount):
+            if i != atm_index and i != cashier_register_index:
+                is_item_picked = item_picked_checker(
+                    status.shopping_list[i]["name"], status.cart
                 )
                 if not is_item_picked:
-                    for item in status.shopping_list[category]:
-                        for i in range(4):
-                            if value < item["q"][i][status.x][status.y]:
-                                value = item["q"][i][status.x][status.y]
-                                direction = i
+                    for j in range(4):
+                        if value < status.q[i][j][status.x][status.y]:
+                            value = status.q[i][j][status.x][status.y]
+                            direction = j
     if value == 0:
         direction = next_direction
 
@@ -277,18 +242,6 @@ def q_comparison(status, next_direction):
 
 def is_random_walk(epsilon):
     return random.random() < epsilon
-
-
-# qマップをリストに変換
-def fetch_q_map(q_path):
-    q = []
-    for i in range(4):
-        current_q = []
-        with open(f"{q_path}/q{i}.txt") as f:
-            for _ in range(VERTICAL):
-                current_q.append([float(v) for v in f.readline().split()])
-        q.append(current_q)
-    return q
 
 
 def walk(status, file):
@@ -317,14 +270,18 @@ def walk(status, file):
     if next_x >= 0 and next_y >= 0 and next_x < VERTICAL and next_y < HORIZONTAL:
 
         # Qマップを全て更新する
-        for category in status.shopping_list:
-            for item in status.shopping_list[category]:
-                if item["q"][next_direction][status.x][status.y] > item["q"][status.pd][status.x][status.y]:
-                    item["q"][status.pd][status.x][status.y] = item["q"][next_direction][status.x][status.y] * 0.9
+        for i in range(status.item_amount):
+            if (
+                status.q[i][next_direction][status.x][status.y]
+                > status.q[i][status.pd][status.px][status.py]
+            ):
+                status.q[i][status.pd][status.px][status.py] = (
+                    status.q[i][next_direction][status.x][status.y] * 0.9
+                )
 
         # 次の場所が未通過か通過済みのとき
-        if status.map[next_x][next_y] == ' ' or status.map[next_x][next_y] == '*':
-            status.map[next_x][next_y] = '*'
+        if status.map[next_x][next_y] == " " or status.map[next_x][next_y] == "*":
+            status.map[next_x][next_y] = "*"
             status.px = status.x
             status.py = status.y
             status.x = next_x
@@ -332,161 +289,195 @@ def walk(status, file):
             status.pd = next_direction
             status.steps = status.steps + 1
 
-            print(f"({status.x}, {status.y})")
+            if status.show_output:
+                print(f"({status.x}, {status.y})")
             file.write(f"({status.x}, {status.y})\n")
+            return status
 
-            return status
-        
         # 次の場所がスタート地点のとき
-        elif status.map[next_x][next_y] == '1':
+        elif status.map[next_x][next_y] == "1":
             return status
-        
+
         # 次の場所に商品がある時
         else:
             should_pick = item_checker(status, status.map[next_x][next_y])
 
-            if should_pick == True:
+            if should_pick:
+
+                # カートに商品を入れ、idを取得
                 item_id = pick_item(status, status.map[next_x][next_y])
 
-                if status.prefer_lower_price_items:
-                    is_category_finished = category_finished_checker(status, item_id)
-                    if is_category_finished == True:
-                        delete_items_from_cart(status, item_id)
-                        status.progress = status.progress + 1
-                        for category in status.shopping_list:
-                            for item in status.shopping_list[category]:
-                                if item["id"] == item_id:
-                                    item['q'][next_direction][status.x][status.y] = 1000
-                else:
-                    status.progress = status.progress + 1
-                    for category in status.shopping_list:
-                        for item in status.shopping_list[category]:
-                            if item["id"] == item_id:
-                                item['q'][next_direction][status.x][status.y] = 1000
-                   
+                # マップと進捗を更新
+                status.progress = status.progress + 1
+                status.q[item_id][next_direction][status.x][status.y] = 1000
             return status
     else:
         return status
 
 
-# get current date and time
+# 設定ファイルからパラメータを取得
+version = ""
+item_amount = 0
+prefer_lower_price_items = False
+epsilon = 0
+starting_x = 0
+starting_y = 0
+show_output = False
+
+with open("./config.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
+
+    # コードのバージョンを取得
+    version = data["version"]
+
+    # 商品（買い物リストの写真）の個数
+    item_amount = data["item_amount"]
+
+    # 最終的な商品の選択方法
+    if data["prefer_lower_price_items"] == True:
+        prefer_lower_price_items = True
+
+    # εを取得
+    epsilon = float(data["epsilon"])
+
+    # スタート地点を取得
+    starting_x = int(data["starting_x"])
+    starting_y = int(data["starting_y"])
+
+    # 出力をターミナルに表示するかどうか
+    show_output = data["show_output"]
+
+# 現在の日付・時間を取得
 now = datetime.datetime.now()
 date = datetime.date.today()
 time = now.strftime("%H-%M-%S-%f")
 
-# create output file
+# 出力用ファイルを作成
 output_file_name = f"./output/tmp_data/{date}_{time}.txt"
 with open(output_file_name, "w") as file:
-    file.write(f"{VERSION} output data\n\n")
+    file.write(f"{version} output data\n\n")
     file.write("Passing Points:\n")
 
-# fetch starting position
-with open("./input/starting_position.txt") as starting_position_file:
-    position = starting_position_file.readline().split(" ")
-    starting_x = int(position[0])
-    starting_y = int(position[1])
-
-# fetch epsilon
-with open("./input/epsilon.txt") as epsilon_file:
-    epsilon = float(epsilon_file.readline())
-
-# 買い物リスト及びそれぞれの商品のQマップを取得
+# 買い物リスト（写真のパス）を取得
 shopping_list_path = "./input/shopping_list"
-shopping_list = {}
+shopping_list = []
 id = 0
-for category_name in os.listdir(shopping_list_path):
-    category_path = os.path.join(shopping_list_path, category_name)
-    shopping_list[category_name] = []
+for f in os.listdir(shopping_list_path):
+    if f == "atm.jpg" or f == "cashier_register.jpg":
+        shopping_list.append(
+            {
+                "id": id,
+                "category": f.split(".")[0],
+                "name": f,
+                "rgb": color_picker(os.path.join(shopping_list_path, f)),
+            }
+        )
+    else:
+        shopping_list.append(
+            {
+                "id": id,
+                "category": f.split("_")[0],
+                "name": f,
+                "rgb": color_picker(os.path.join(shopping_list_path, f)),
+            }
+        )
+    id += 1
 
-    for item_name in os.listdir(category_path):
-        item_path = os.path.join(category_path, item_name)
-        item_image_path = os.path.join(item_path, f'{item_name}.jpg')
-        item_q_path = os.path.join(item_path, 'q')
-
-        q = fetch_q_map(item_q_path)
-
-        shopping_list[category_name].append({ 'id': id, 'name': item_name, 'price': 0, 'rgb': color_picker(item_image_path), 'q': q})
-        id += 1
-
-# fetch map
+# 地図を取得
 map = []
 with open("./input/map.txt") as map_file:
     for _ in range(VERTICAL):
-        map.append(list(map_file.readline().rstrip('\n')))
+        map.append(list(map_file.readline().rstrip("\n")))
 
-# read config json file
-prefer_lower_price_items = False
-with open('./input/config.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
-    if data['prefer_lower_price_items'] == True:
-        prefer_lower_price_items = True
+# Qマップを取得
+q = []
+for i in range(item_amount):
+    item_q = []
+    for j in range(4):
+        current_q = []
+        with open(f"./input/q/{i}/q{j}.txt") as f:
+            for _ in range(VERTICAL):
+                current_q.append([float(v) for v in f.readline().split()])
+        item_q.append(current_q)
+    q.append(item_q)
 
-# cart
-cart = [None] * ITEM_AMOUNT
 
-# finished categories
-finished_categories = [None] * ITEM_AMOUNT
+# カートの初期化
+cart = [None] * item_amount
 
-# initial money
+# 最初の所持金をランダムに決定
 initial_money = random.randint(0, 100000)
 
-# walk
-status = Status(starting_x, starting_y, initial_money, shopping_list, cart, finished_categories, epsilon, map, prefer_lower_price_items)
+# 状態の初期化
+status = Status(
+    starting_x,
+    starting_y,
+    initial_money,
+    shopping_list,
+    cart,
+    epsilon,
+    q,
+    map,
+    item_amount,
+    show_output,
+)
+
+# 歩く(実験開始)
 with open(output_file_name, "a") as file:
     keep_going = True
-    while(keep_going):
+    while keep_going:
         status = walk(status, file)
-        print(f"Progress: {status.progress}, Steps: {status.steps}")
-        if status.progress == CATEGORY_AMOUNT:
+        if status.show_output:
+            print(f"Progress: {status.progress}, Steps: {status.steps}")
+        if status.progress == item_amount:
             keep_going = False
 status = checkout(status)
 
-# output result
-print(f"\nOutput file name: {date}_{time}.txt")
-
-print(f"Epsilon: {epsilon}")
-
-shopping_list_text = "Shopping List: "
+# 出力用に買い物リストのを文字列に変換
+shopping_list_text = "Shopping List:\n"
 for i in shopping_list:
-    shopping_list_text += f"{i} -> "
-print(shopping_list_text)
+    shopping_list_text += f"- {i['name']}\n"
 
-cart_text = "Cart: "
+# 出力用にカートの中身を文字列に変換(取得した順)
+cart_text = "Visit order:\n"
+order = 1
 for i in status.cart:
     if i is not None:
-        cart_text += f"{i['name']}: {i['price']}¥ -> "
-print(cart_text)
+        cart_text += f"{order}, {{ Symbol: {i['symbol']}, Name: {i['name']}, Price: {i['price']}¥ }}\n"
+        order += 1
 
-items_purchased_text = "Items purchased: "
+# 出力用に購入した商品を文字列に変換
+items_purchased_text = "Items purchased:\n"
 for i in status.items_purchased:
-    items_purchased_text += f"{i['name']}: {i['price']}¥ -> "
-print(items_purchased_text)
+    items_purchased_text += f"{{{i['name']}: {i['price']}¥}}\n"
 
-print(f"Initial money: {status.initial_money}")
-
-print(f"Cash balance: {status.cash_balance}")
-
-print(f"Is shopping successful?: {status.is_shopping_successful}")
-
-print(f"Progress: {status.progress}")
-
-print(f"Steps: {status.steps}")
-
-print(f"Map: ")
-for i in range(VERTICAL):
-    for j in range(HORIZONTAL):
-        print(status.map[i][j], end="")
+# ターミナルに出力
+if status.show_output:
+    print(f"\nOutput file name: {date}_{time}.txt\n")
+    print(f"Epsilon: {epsilon}\n")
+    print(shopping_list_text)
+    print(cart_text)
+    print(items_purchased_text)
+    print(f"Initial money: {status.initial_money}¥\n")
+    print(f"Cash balance: {status.cash_balance}¥\n")
+    print(f"Is shopping successful?: {status.is_shopping_successful}\n")
+    print(f"Progress: {status.progress}\n")
+    print(f"Steps: {status.steps}\n")
+    print(f"Map: ")
+    for i in range(VERTICAL):
+        for j in range(HORIZONTAL):
+            print(status.map[i][j], end="")
+        print()
     print()
 
-print()
-
+# ファイルに出力
 with open(output_file_name, "a") as file:
     file.write(f"\nEpsilon: {epsilon}\n\n")
-    file.write(f"{shopping_list_text}\n\n")
-    file.write(f"{cart_text}\n\n")
-    file.write(f"{items_purchased_text}\n\n")
-    file.write(f"Initial money: {status.initial_money}\n\n")
-    file.write(f"Cash balance: {status.cash_balance}\n\n")
+    file.write(f"{shopping_list_text}\n")
+    file.write(f"{cart_text}\n")
+    file.write(f"{items_purchased_text}\n")
+    file.write(f"Initial money: {status.initial_money}¥\n\n")
+    file.write(f"Cash balance: {status.cash_balance}¥\n\n")
     file.write(f"Is shopping successful?: {status.is_shopping_successful}\n\n")
     file.write(f"Progress: {status.progress}\n\n")
     file.write(f"Steps: {status.steps}\n\n")
@@ -496,13 +487,12 @@ with open(output_file_name, "a") as file:
             file.write(f"{status.map[i][j]}")
         file.write("\n")
 
-# update Q value
-for category in status.shopping_list:
-    for item in status.shopping_list[category]:
-        for j in range(4):
-            q_dir = os.path.join(shopping_list_path, category, item['name'], 'q')
-            q_file_path = os.path.join(q_dir, f"q{j}.txt")
-            with open(q_file_path, "w") as f:
-                for k in range(VERTICAL):
-                    line = " ".join(f"{item['q'][j][k][l]:.3f}" for l in range(HORIZONTAL))
-                    f.write(line + "\n")
+# Qマップを保存
+for i in range(item_amount):
+    for j in range(4):
+        with open(f"./input/q/{i}/q{j}.txt", "w") as f:
+            for k in range(VERTICAL):
+                line = " ".join(
+                    f"{status.q[i][j][k][l]:.3f}" for l in range(HORIZONTAL)
+                )
+                f.write(line + "\n")
