@@ -1,75 +1,73 @@
-import matplotlib.pyplot as plt
+import datetime
+import json
 import re
 import os
 import csv
 
-PROJECT_NUM = "67"
-TITLE = "Parallel Q update method"
 
+def write_csv(directory, version, date_str, csv_writer, runs_per_set, sets):
+    # 結果の初期化
+    min_steps = float('inf') # 全結果の中の最小値（非常に大きい初期値）（全セット含む）
+    max_steps = 0 # 全結果の中の最大値（全セット含む）
+    average_steps = 0 # 全結果の平均値（全セット含む）
+    sum_steps = 0 # 全結果の合計（全セット含む）
 
-def output_data(directory, name, csv_writer):
-    min_steps = 0
-    max_steps = 0
-    average_steps = 0
-    steps = []
-    steps0 = []
-    steps1 = []
-    steps2 = []
-    steps3 = []
+    total_count = 0  # 実際に読み込んだステップ数
 
-    for num in range(0, 4):
-        current_directory = os.path.join(directory, f"{num}")
+    for num_set in range(0, sets):
+        current_num_set_path = os.path.join(directory, f"{num_set}")
 
-        for filename in sorted(os.listdir(current_directory)):
-            if filename.endswith(".txt"):
-                file_path = os.path.join(current_directory, filename)
+        for output_file_name in sorted(os.listdir(current_num_set_path)):
+            if output_file_name.endswith(".txt"):
+                file_path = os.path.join(current_num_set_path, output_file_name)
                 with open(file_path, "r", encoding="utf-8") as file:
                     for line in file:
                         match = re.search(r"Steps: (\d+)", line)
                         if match:
-                            if num == 0:
-                                steps0.append(int(match.group(1)))
-                            elif num == 1:
-                                steps1.append(int(match.group(1)))
-                            elif num == 2:
-                                steps2.append(int(match.group(1)))
-                            elif num == 3:
-                                steps3.append(int(match.group(1)))
+                            step = int(match.group(1))
+                            # 最小値・最大値・合計を更新
+                            min_steps = min(min_steps, step)
+                            max_steps = max(max_steps, step)
+                            sum_steps += step
+                            total_count += 1
                             break
 
-        if num == 0:
-            min_steps = min_steps + min(steps0)
-            max_steps = max_steps + max(steps0)
-            average_steps = average_steps + sum(steps0) / len(steps0) if steps0 else 0
-        elif num == 1:
-            min_steps = min_steps + min(steps1)
-            max_steps = max_steps + max(steps1)
-            average_steps = average_steps + sum(steps1) / len(steps1) if steps1 else 0
-        elif num == 2:
-            min_steps = min_steps + min(steps2)
-            max_steps = max_steps + max(steps2)
-            average_steps = average_steps + sum(steps2) / len(steps2) if steps2 else 0
-        elif num == 3:
-            min_steps = min_steps + min(steps3)
-            max_steps = max_steps + max(steps3)
-            average_steps = average_steps + sum(steps3) / len(steps3) if steps3 else 0
+    # 実際に読み込んだ数と期待値を比較
+    expected_count = runs_per_set * sets
+    if total_count != expected_count:
+        raise ValueError(
+            f"読み込んだステップ数が期待値と異なります: {total_count} != {expected_count}"
+        )
 
-    for n in range(0, 1000):
-        total = steps0[n] + steps1[n] + steps2[n] + steps3[n]
-        ave = total / 4
-        steps.append(ave)
+    # 平均値を計算
+    average_steps = sum_steps / (runs_per_set * sets)
 
-    min_steps = min_steps / 4
-    max_steps = max_steps / 4
-    average_steps = average_steps / 4
+    # 結果をcsvファイルに書き込み
+    csv_writer.writerow([version, date_str, runs_per_set, sets, min_steps, max_steps, f"{average_steps:.2f}"])
 
-    csv_writer.writerow([name, min_steps, max_steps, f"{average_steps:.2f}"])
+# 設定ファイルを読み込む
+with open("./input/config.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
 
+    # コードのバージョンを取得
+    version = data["version"]
 
-with open("stats.csv", "w", newline="", encoding="utf-8") as f:
+    # 1セットあたりの実行回数を取得
+    runs_per_set = data["runs_per_set"]
+
+    # セット数を取得
+    sets = data["sets"]
+
+with open("./output/stats.csv", "w", newline="", encoding="utf-8") as f:
+    # 現在の日付・時間を取得
+    now = datetime.datetime.now()
+    date = datetime.date.today()
+    time = now.strftime("%H-%M-%S-%f")
+    date_str = f"{date}_{time}"
+
+    # CSVのヘッダーを作成
     csv_writer = csv.writer(f)
-    csv_writer.writerow(["Title", "Min", "Max", "Average"])
+    csv_writer.writerow(["Version", "Date", "Runs_per_set", "Sets", "Min", "Max", "Average"])
 
     directory = f"./output/data"
-    name = f"file{PROJECT_NUM}"
-    output_data(directory, name, csv_writer)
+    write_csv(directory, version, date_str, csv_writer, runs_per_set, sets)
