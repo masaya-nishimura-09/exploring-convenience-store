@@ -1,0 +1,165 @@
+Title: df54_map0_e0
+Min: 111.5
+Max: 22651.5
+Average: 284.87
+
+Title: df54_map0_e10
+Min: 104.5
+Max: 23590.25
+Average: 290.15
+
+Title: df54_map0_e20
+Min: 99.25
+Max: 25579.0
+Average: 340.34
+
+Title: df54_map0_e30
+Min: 115.25
+Max: 35460.25
+Average: 335.52
+
+Title: df54_map0_e40
+Min: 136.25
+Max: 27949.75
+Average: 403.76
+
+Title: df54_map0_e50
+Min: 143.5
+Max: 20414.5
+Average: 393.73
+
+Title: df54_map0_e60
+Min: 172.75
+Max: 28105.75
+Average: 474.56
+
+Title: df54_map0_e70
+Min: 223.75
+Max: 39804.75
+Average: 686.01
+
+Title: df54_map0_e80
+Min: 356.5
+Max: 30731.0
+Average: 964.51
+
+Title: df54_map0_e90
+Min: 591.25
+Max: 23673.25
+Average: 1965.34
+
+Title: df54_map0_e100
+Min: 2985.5
+Max: 81758.25
+Average: 21250.49
+
+Title: df54_map1_e0
+Min: 123.5
+Max: 30320.0
+Average: 770.47
+
+Title: df54_map1_e10
+Min: 118.75
+Max: 34612.25
+Average: 902.81
+
+Title: df54_map1_e20
+Min: 134.25
+Max: 35681.75
+Average: 931.28
+
+Title: df54_map1_e30
+Min: 132.0
+Max: 33492.5
+Average: 890.63
+
+Title: df54_map1_e40
+Min: 185.5
+Max: 36756.75
+Average: 1072.87
+
+Title: df54_map1_e50
+Min: 190.25
+Max: 37940.5
+Average: 1148.20
+
+Title: df54_map1_e60
+Min: 211.0
+Max: 32982.5
+Average: 1109.76
+
+Title: df54_map1_e70
+Min: 276.0
+Max: 30550.25
+Average: 1215.61
+
+Title: df54_map1_e80
+Min: 366.75
+Max: 47894.75
+Average: 1470.01
+
+Title: df54_map1_e90
+Min: 770.5
+Max: 34506.75
+Average: 2579.00
+
+Title: df54_map1_e100
+Min: 3484.75
+Max: 104080.75
+Average: 26372.23
+
+Title: df54_map2_e0
+Min: 165.75
+Max: 42122.25
+Average: 911.98
+
+Title: df54_map2_e10
+Min: 147.75
+Max: 33693.25
+Average: 1001.45
+
+Title: df54_map2_e20
+Min: 158.5
+Max: 32388.0
+Average: 1087.06
+
+Title: df54_map2_e30
+Min: 173.5
+Max: 36446.25
+Average: 1078.63
+
+Title: df54_map2_e40
+Min: 198.75
+Max: 38899.75
+Average: 1056.76
+
+Title: df54_map2_e50
+Min: 239.75
+Max: 36139.75
+Average: 1175.30
+
+Title: df54_map2_e60
+Min: 267.75
+Max: 42305.25
+Average: 1237.10
+
+Title: df54_map2_e70
+Min: 331.25
+Max: 35707.75
+Average: 1352.60
+
+Title: df54_map2_e80
+Min: 495.0
+Max: 35358.25
+Average: 1599.37
+
+Title: df54_map2_e90
+Min: 997.25
+Max: 39344.75
+Average: 2812.30
+
+Title: df54_map2_e100
+Min: 4681.0
+Max: 100458.5
+Average: 27201.52
+
