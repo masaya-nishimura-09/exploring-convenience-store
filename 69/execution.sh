@@ -45,7 +45,7 @@ done
 # 複数セット実行
 for j in $(seq 0 $((sets - 1))); do
     for i in $(seq 1 $runs_per_set); do
-        python3 main.py; 
+        python3 src/main.py; 
     done
     mv output/tmp_data/* output/data/$j
     setup_q_maps
@@ -53,7 +53,7 @@ done
 
 # 統計情報をまとめる
 touch ./output/stats.csv
-python3 write_result.py
+python3 src/write_result.py
 
 # 設定ファイルを output フォルダにコピー
 cp config.json output/

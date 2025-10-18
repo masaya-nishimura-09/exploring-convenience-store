@@ -1,3 +1,7 @@
+#TODO: クラスの整理
+#TODO: 関数の整理
+#TODO: エラー処理の追加
+
 import datetime
 import random
 import colorgram
@@ -244,6 +248,60 @@ def is_random_walk(epsilon):
     return random.random() < epsilon
 
 
+# 出力用ファイルを作成
+def create_output_file(version: str) -> str:
+    # 現在の日付・時間を取得
+    now = datetime.datetime.now()
+    date = datetime.date.today()
+    time = now.strftime("%H-%M-%S-%f")
+
+    # 出力用ファイルを作成
+    output_file_path = f"./output/tmp_data/{date}_{time}.txt"
+    with open(output_file_path, "w") as file:
+        file.write(f"{version} output data\n\n")
+        file.write("Passing Points:\n")
+
+    return output_file_path
+
+
+# 買い物リスト（写真のパス）を取得
+def get_shopping_list() -> list:
+    shopping_list_path = "./input/shopping_list"
+    shopping_list = []
+    id = 0
+    for f in os.listdir(shopping_list_path):
+        if f == "atm.jpg" or f == "cashier_register.jpg":
+            shopping_list.append(
+                {
+                    "id": id,
+                    "category": f.split(".")[0],
+                    "name": f,
+                    "rgb": color_picker(os.path.join(shopping_list_path, f)),
+                }
+            )
+        else:
+            shopping_list.append(
+                {
+                    "id": id,
+                    "category": f.split("_")[0],
+                    "name": f,
+                    "rgb": color_picker(os.path.join(shopping_list_path, f)),
+                }
+            )
+        id += 1
+
+    return shopping_list
+
+
+# 地図を取得
+def get_map() -> list:
+    map = []
+    with open("./input/map.txt") as map_file:
+        for _ in range(VERTICAL):
+            map.append(list(map_file.readline().rstrip("\n")))
+    return map
+
+
 def walk(status, file):
     next_direction = random.randint(0, 3)
     random_walk = is_random_walk(status.epsilon)
@@ -347,47 +405,14 @@ with open("./config.json", "r", encoding="utf-8") as file:
     # 出力をターミナルに表示するかどうか
     show_output = data["show_output"]
 
-# 現在の日付・時間を取得
-now = datetime.datetime.now()
-date = datetime.date.today()
-time = now.strftime("%H-%M-%S-%f")
-
 # 出力用ファイルを作成
-output_file_name = f"./output/tmp_data/{date}_{time}.txt"
-with open(output_file_name, "w") as file:
-    file.write(f"{version} output data\n\n")
-    file.write("Passing Points:\n")
+output_file_path= create_output_file(version)
 
 # 買い物リスト（写真のパス）を取得
-shopping_list_path = "./input/shopping_list"
-shopping_list = []
-id = 0
-for f in os.listdir(shopping_list_path):
-    if f == "atm.jpg" or f == "cashier_register.jpg":
-        shopping_list.append(
-            {
-                "id": id,
-                "category": f.split(".")[0],
-                "name": f,
-                "rgb": color_picker(os.path.join(shopping_list_path, f)),
-            }
-        )
-    else:
-        shopping_list.append(
-            {
-                "id": id,
-                "category": f.split("_")[0],
-                "name": f,
-                "rgb": color_picker(os.path.join(shopping_list_path, f)),
-            }
-        )
-    id += 1
+shopping_list = get_shopping_list()
 
 # 地図を取得
-map = []
-with open("./input/map.txt") as map_file:
-    for _ in range(VERTICAL):
-        map.append(list(map_file.readline().rstrip("\n")))
+map = get_map()
 
 # Qマップを取得
 q = []
@@ -423,7 +448,7 @@ status = Status(
 )
 
 # 歩く(実験開始)
-with open(output_file_name, "a") as file:
+with open(output_file_path, "a") as file:
     keep_going = True
     while keep_going:
         status = walk(status, file)
@@ -453,7 +478,7 @@ for i in status.items_purchased:
 
 # ターミナルに出力
 if status.show_output:
-    print(f"\nOutput file name: {date}_{time}.txt\n")
+    print(f"\nOutput file path: {output_file_path}\n")
     print(f"Epsilon: {epsilon}\n")
     print(shopping_list_text)
     print(cart_text)
@@ -471,7 +496,7 @@ if status.show_output:
     print()
 
 # ファイルに出力
-with open(output_file_name, "a") as file:
+with open(output_file_path, "a") as file:
     file.write(f"\nEpsilon: {epsilon}\n\n")
     file.write(f"{shopping_list_text}\n")
     file.write(f"{cart_text}\n")
