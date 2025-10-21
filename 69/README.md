@@ -29,6 +29,7 @@
 
 - ./input/config.json を正しく設定する。
 - 買い物リスト用の写真の名前は、`カテゴリ名_商品名.jpg` とする。(atm とレジは除く)
+- $ ./create_env.sh
 - $ ./execution.sh
 
 ## 実行後
