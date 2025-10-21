@@ -1,5 +1,3 @@
-#TODO: エラー処理の追加
-
 import random
 from status import Status, Position, Wallet, ShoppingCart
 from shopper import Shopper
@@ -21,7 +19,7 @@ shopping_list = get_shopping_list()
 q_map = get_q_map(config["item_amount"], config["vertical"])
 
 # 6, ステータスの初期化
-position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"])
+position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"], config["line_of_view"])
 wallet = Wallet(random.randint(0, 100000))
 shopping_cart = ShoppingCart(config["item_amount"])
 status = Status(
