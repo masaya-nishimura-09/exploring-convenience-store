@@ -10,7 +10,7 @@ sets=$(python3 -c "import json; data=json.load(open('./config.json')); print(dat
 rm -rf venv
 python3 -m venv venv
 source venv/bin/activate
-pip install colorgram.py
+pip install colorgram.py matplotlib
 
 # 買い物リストの個数を取得し、config.json を更新
 item_amount=$(ls -1 ./input/shopping_list | wc -l)
@@ -54,6 +54,10 @@ done
 # 統計情報をまとめる
 touch ./output/stats.csv
 python3 src/write_result.py
+
+#グラフを作成する
+mkdir ./output/graphs
+python3 src/create_graph.py
 
 # 設定ファイルを output フォルダにコピー
 cp config.json output/

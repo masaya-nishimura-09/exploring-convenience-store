@@ -3,6 +3,7 @@ import json
 import re
 import os
 import csv
+from io_utils import get_root_dir
 
 
 def write_csv(directory, version, date_str, csv_writer, runs_per_set, sets):
@@ -45,8 +46,11 @@ def write_csv(directory, version, date_str, csv_writer, runs_per_set, sets):
     # 結果をcsvファイルに書き込み
     csv_writer.writerow([version, date_str, runs_per_set, sets, min_steps, max_steps, f"{average_steps:.2f}"])
 
+
+root_dir = get_root_dir()
+
 # 設定ファイルを読み込む
-with open("./config.json", "r", encoding="utf-8") as file:
+with open(os.path.join(root_dir, "config.json"), "r", encoding="utf-8") as file:
     data = json.load(file)
 
     # コードのバージョンを取得
@@ -58,7 +62,7 @@ with open("./config.json", "r", encoding="utf-8") as file:
     # セット数を取得
     sets = data["sets"]
 
-with open("./output/stats.csv", "w", newline="", encoding="utf-8") as f:
+with open(os.path.join(root_dir, "output/stats.csv"), "w", newline="", encoding="utf-8") as f:
     # 現在の日付・時間を取得
     now = datetime.datetime.now()
     date = datetime.date.today()
@@ -69,5 +73,5 @@ with open("./output/stats.csv", "w", newline="", encoding="utf-8") as f:
     csv_writer = csv.writer(f)
     csv_writer.writerow(["Version", "Date", "Runs_per_set", "Sets", "Min", "Max", "Average"])
 
-    directory = f"./output/data"
+    directory = os.path.join(root_dir, "output/data")
     write_csv(directory, version, date_str, csv_writer, runs_per_set, sets)

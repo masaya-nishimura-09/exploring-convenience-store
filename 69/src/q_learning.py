@@ -30,14 +30,14 @@ def q_comparison(status, next_direction):
 
     # まだatmを探している時
     if status.shopping_cart.progress == 0:
-        for i in range(4):
+        for i in range(8):
             if value < status.q_map[atm_index][i][status.position.x][status.position.y]:
                 value = status.q_map[atm_index][i][status.position.x][status.position.y]
                 direction = i
 
     # レジを探している時
     elif status.shopping_cart.progress == status.shopping_cart.item_amount - 1:
-        for i in range(4):
+        for i in range(8):
             if value < status.q_map[cashier_register_index][i][status.position.x][status.position.y]:
                 value = status.q_map[cashier_register_index][i][status.position.x][status.position.y]
                 direction = i
@@ -50,7 +50,7 @@ def q_comparison(status, next_direction):
                     status.shopping_list[i]["name"], status.shopping_cart.cart
                 )
                 if not is_item_picked:
-                    for j in range(4):
+                    for j in range(8):
                         if value < status.q_map[i][j][status.position.x][status.position.y]:
                             value = status.q_map[i][j][status.position.x][status.position.y]
                             direction = j

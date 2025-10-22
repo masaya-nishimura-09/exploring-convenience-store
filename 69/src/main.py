@@ -7,7 +7,7 @@ from io_utils import load_config, create_output_file, get_q_map, get_map, get_sh
 config = load_config()
 
 # 2, 出力用ファイル準備
-output_file_path= create_output_file(config["version"])
+output_file_path = create_output_file(config["version"])
 
 # 3, 地図を読み込む
 store_map = get_map(config["vertical"])
@@ -19,7 +19,7 @@ shopping_list = get_shopping_list()
 q_map = get_q_map(config["item_amount"], config["vertical"])
 
 # 6, ステータスの初期化
-position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"], config["line_of_view"])
+position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"])
 wallet = Wallet(random.randint(0, 100000))
 shopping_cart = ShoppingCart(config["item_amount"])
 status = Status(

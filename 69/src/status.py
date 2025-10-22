@@ -20,7 +20,7 @@ class Status:
 
 # 位置情報管理クラス
 class Position:
-    def __init__(self, x, y, vertical, horizontal, line_of_view):
+    def __init__(self, x, y, vertical, horizontal):
         self.x = x
         self.y = y
         self.d = 0
@@ -30,7 +30,6 @@ class Position:
         self.prev_d = 0
         self.vertical = vertical
         self.horizontal = horizontal
-        self.line_of_view = line_of_view
 
     
     # 位置情報更新

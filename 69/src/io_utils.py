@@ -78,11 +78,11 @@ def get_shopping_list() -> list:
 
 
 # qマップを取得
-def get_q_map(item_amount: str, vertical: int) -> list:
+def get_q_map(item_amount: int, vertical: int) -> list:
     q_map = []
     for i in range(item_amount):
         item_q = []
-        for j in range(4):
+        for j in range(8):
             current_q = []
             root_dir = get_root_dir()
             with open(os.path.join(root_dir, f"input/q/{i}/q{j}.txt")) as f:
@@ -103,7 +103,6 @@ def write_position_to_file(show_output, file, x, y):
 # 進捗とステップ数を表示
 def show_progress_steps(status):
     if status.show_output:
-        print(f"Position: ({status.position.x}, {status.position.y}, {status.position.d})")
         print(f"Progress: {status.shopping_cart.progress}, Steps: {status.position.steps}")
 
 
@@ -167,7 +166,7 @@ def output_results(status, output_file_path):
 # 更新したqマップを保存
 def save_q_map(status, item_amount):
     for i in range(item_amount):
-        for j in range(4):
+        for j in range(8):
             root_dir = get_root_dir()
             with open(os.path.join(root_dir, f"input/q/{i}/q{j}.txt"), "w") as f:
                 for k in range(status.position.vertical):
