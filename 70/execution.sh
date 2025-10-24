@@ -10,7 +10,7 @@ sets=$(python3 -c "import json; data=json.load(open('./config.json')); print(dat
 rm -rf venv
 python3 -m venv venv
 source venv/bin/activate
-pip install colorgram.py matplotlib
+pip install torch torchvision pillow matplotlib
 
 # 買い物リストの個数を取得し、config.json を更新
 item_amount=$(ls -1 ./input/shopping_list | wc -l)

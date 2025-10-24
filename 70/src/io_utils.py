@@ -3,7 +3,6 @@
 import json
 import datetime
 import os
-from color_utils import color_picker
 
 
 # プロジェクトのルートディレクトリのパスを取得
@@ -60,7 +59,7 @@ def get_shopping_list() -> list:
                     "id": id,
                     "category": f.split(".")[0],
                     "name": f,
-                    "rgb": color_picker(os.path.join(shopping_list_path, f)),
+                    "path": os.path.join(shopping_list_path, f),
                 }
             )
         else:
@@ -69,7 +68,7 @@ def get_shopping_list() -> list:
                     "id": id,
                     "category": f.split("_")[0],
                     "name": f,
-                    "rgb": color_picker(os.path.join(shopping_list_path, f)),
+                    "path": os.path.join(shopping_list_path, f),
                 }
             )
         id += 1

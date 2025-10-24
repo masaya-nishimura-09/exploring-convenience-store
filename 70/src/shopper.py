@@ -4,8 +4,8 @@ import os
 import random
 from q_learning import q_comparison, update_all_q_map
 from io_utils import write_position_to_file, get_root_dir
-from color_utils import color_picker, are_same_list
 from operator import itemgetter
+from color_utils import is_same_product
 
 
 def get_next_direction(status):
@@ -51,81 +51,55 @@ def get_next_x_y(status, direction):
 # 商品をかごに入れるべきか判別
 def item_checker(status, tile):
     root_dir = get_root_dir()
-    # 対象の商品、atm、レジの色を取得
-    item_rgb = color_picker(os.path.join(root_dir, f"input/item_images/{tile}.jpg") )
-
-    atm_rgb = []
-    for item in status.shopping_list:
-        if item["name"] == "atm.jpg":
-            atm_rgb = item["rgb"]
-            break
-
-    cashier_rgb = []
-    for item in status.shopping_list:
-        if item["name"] == "cashier_register.jpg":
-            cashier_rgb = item["rgb"]
-            break
+    item_path = os.path.join(root_dir, f"input/item_images/{tile}.jpg")
+    atm_path = next((item["path"] for item in status.shopping_list if item["name"] == "atm.jpg"), "")
+    cashier_path = next((item["path"] for item in status.shopping_list if item["name"] == "cashier_register.jpg"), "")
 
     # まだ何も見つけてない　かつ　見つけたものがatmでない時
-    if status.shopping_cart.progress == 0 and not are_same_list(item_rgb, atm_rgb):
-        return False
+    if status.shopping_cart.progress == 0 and not is_same_product(item_path, atm_path):
+        return False, 0
 
     # atmを見つけた後　かつ　見つけたものがatmの時
-    if status.shopping_cart.progress > 0 and are_same_list(item_rgb, atm_rgb):
-        return False
+    if status.shopping_cart.progress > 0 and is_same_product(item_path, atm_path):
+        return False, 0
 
     # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
-    if status.shopping_cart.progress < len(status.shopping_list) - 1 and are_same_list(
-        item_rgb, cashier_rgb
+    if status.shopping_cart.progress < len(status.shopping_list) - 1 and is_same_product(
+        item_path, cashier_path
     ):
-        return False
+        return False, 0
 
     # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
     for s in status.shopping_list:
-        if are_same_list(item_rgb, s["rgb"]):
+        if is_same_product(item_path, s["path"]):
             item_name = s["name"]
             if any(c is not None and item_name == c["name"] for c in status.shopping_cart.cart):
-                return False
-            return True
+                return False, 0
+            
+            pick_item(status, s, tile)
+            return True, s["id"]
 
-    return False
+    return False, 0
 
 
 # 商品をカゴに入れる
-def pick_item(status, tile):
-    root_dir = get_root_dir()
-    item_rgb = color_picker(os.path.join(root_dir, f"input/item_images/{tile}.jpg") )
-
-    item_id = 0
-    item_name = ""
-    item_category = ""
-
+def pick_item(status, item, tile):
     price = 0
-    if tile == "$" or tile == "-":
+    if item["name"] == "atm.jpg" or item["name"] == "cashier_register.jpg":
         price = 0
     else:
         price = random.randint(100, 10000)
-
-    # 見つけた商品のid、名前、カテゴリを取得
-    for item in status.shopping_list:
-        if are_same_list(item["rgb"], item_rgb):
-            item_id = item["id"]
-            item_name = item["name"]
-            item_category = item["category"]
-            break
 
     # カゴに見つけた商品を入れる
     for i in range(len(status.shopping_list)):
         if status.shopping_cart.cart[i] == None:
             status.shopping_cart.cart[i] = {
-                "category": item_category,
+                "category": item["category"],
                 "symbol": tile,
-                "name": item_name,
+                "name": item["name"],
                 "price": price,
             }
             break
-
-    return item_id
 
 
 class Shopper:
@@ -168,9 +142,8 @@ class Shopper:
 
         # 次の場所に商品がある時
         else:
-            if item_checker(status, next_tile):
-                # カートに商品を入れ、idを取得
-                item_id = pick_item(status, next_tile)
+            true_or_false, item_id = item_checker(status, next_tile)
+            if true_or_false:
 
                 # マップと進捗を更新
                 status.shopping_cart.update_progress()
