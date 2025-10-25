@@ -1,7 +1,8 @@
 import random
 from status import Status, Position, Wallet, ShoppingCart
 from shopper import Shopper
-from io_utils import load_config, create_output_file, get_q_map, get_map, get_shopping_list, show_progress_steps, output_results, save_q_map
+from io_utils import load_config, create_output_file, get_q_map, get_shopping_list, output_results, save_q_map
+from map import map_data
 
 # 1, 設定ファイルからパラメータを取得
 config = load_config()
@@ -10,7 +11,7 @@ config = load_config()
 output_file_path = create_output_file(config["version"])
 
 # 3, 地図を読み込む
-store_map = get_map(config["vertical"])
+store_map = map_data
 
 # 4, 買い物リストを読み込む
 shopping_list = get_shopping_list()
@@ -40,7 +41,6 @@ shopper = Shopper(status)
 with open(output_file_path, "a") as file:
     while status.shopping_cart.progress < status.shopping_cart.item_amount:
         shopper.walk(file)
-        show_progress_steps(status)
 
 # 9, 会計
 shopper.checkout()

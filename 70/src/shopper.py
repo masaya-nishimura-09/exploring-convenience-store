@@ -3,7 +3,7 @@
 import os
 import random
 from q_learning import q_comparison, update_all_q_map
-from io_utils import write_position_to_file, get_root_dir
+from io_utils import write_position_to_file, get_root_dir, display_map
 from operator import itemgetter
 from color_utils import is_same_product
 
@@ -127,12 +127,17 @@ class Shopper:
         if next_tile == " " or next_tile == "*":
 
             # マップを更新
-            status.store_map[next_x][next_y] = "*"
+            row = list(status.store_map[next_x])
+            row[next_y] = '*'
+            status.store_map[next_x] = ''.join(row)
 
             # 位置情報更新
             status.position.move_to(next_x, next_y, next_direction)
 
-            # 出力ファイルに書き込み+ターミナルに表示
+            #ターミナルにマップを表示
+            display_map(status, next_x, next_y)
+
+            # 出力ファイルに書き込み
             write_position_to_file(status.show_output, file, next_x, next_y)
             return
 

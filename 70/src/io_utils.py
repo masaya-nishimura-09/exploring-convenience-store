@@ -1,8 +1,10 @@
 # ファイル入出力ユーティリティ
 
-import json
 import datetime
+import json
+import time
 import os
+import shutil
 
 
 # プロジェクトのルートディレクトリのパスを取得
@@ -34,16 +36,6 @@ def create_output_file(version: str) -> str:
         file.write("Passing Points:\n")
 
     return output_file_path
-
-
-# 地図を取得
-def get_map(vertical: int) -> list:
-    map = []
-    root_dir = get_root_dir()
-    with open(os.path.join(root_dir, "input/map.txt")) as map_file:
-        for _ in range(vertical):
-            map.append(list(map_file.readline().rstrip("\n")))
-    return map
 
 
 # 買い物リスト（写真のパス）を取得
@@ -94,15 +86,29 @@ def get_q_map(item_amount: int, vertical: int) -> list:
 
 # 座標を出力ファイルに書き込み+ターミナルに表示
 def write_position_to_file(show_output, file, x, y):
-    if show_output:
-        print(f"({x}, {y})")
     file.write(f"({x}, {y})\n")
 
 
-# 進捗とステップ数を表示
-def show_progress_steps(status):
+def clear_terminal():
+    # ターミナルの高さを取得
+    terminal_height = shutil.get_terminal_size().lines
+    # 高さ分の改行を出力
+    print("\n" * terminal_height)
+    
+
+# ターミナルにマップと進捗を表示
+def display_map(status, x, y):
     if status.show_output:
-        print(f"Progress: {status.shopping_cart.progress}, Steps: {status.position.steps}")
+        # 画面クリア
+        print("\033[H\033[J", end='')
+
+        print("-" * 50)
+        print()
+        print(f"Map:")
+        print("\n".join(status.store_map))
+        print(f"\nProgress: {status.shopping_cart.progress}/{status.shopping_cart.item_amount}\n")
+        print(f"Steps: {status.position.steps}\n")
+        print(f"Position: ({x}, {y})")
 
 
 # 最終結果を出力
@@ -137,12 +143,7 @@ def output_results(status, output_file_path):
         print(f"Is shopping successful?: {status.shopping_cart.is_shopping_successful}\n")
         print(f"Progress: {status.shopping_cart.progress}\n")
         print(f"Steps: {status.position.steps}\n")
-        print(f"Map: ")
-        for i in range(status.position.vertical):
-            for j in range(status.position.horizontal):
-                print(status.store_map[i][j], end="")
-            print()
-        print()
+        clear_terminal()
 
     # ファイルに出力
     with open(output_file_path, "a") as file:
