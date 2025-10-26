@@ -7,7 +7,7 @@ from PIL import Image
 import torch.nn.functional as F
 
 # モデル準備
-model = models.resnet18(pretrained=True)
+model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
 model = torch.nn.Sequential(*(list(model.children())[:-1]))
 model.eval()
 
