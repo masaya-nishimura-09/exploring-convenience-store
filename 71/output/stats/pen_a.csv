@@ -1,0 +1,10 @@
+Name1,Name2,Similarity
+pen_a,banana_a,0.5710
+pen_a,banana_b,0.5061
+pen_a,banana_c,0.5151
+pen_a,pen_a,1.0000
+pen_a,pen_b,0.7123
+pen_a,pen_c,0.6719
+pen_a,water_a,0.6219
+pen_a,water_b,0.6150
+pen_a,water_c,0.5455

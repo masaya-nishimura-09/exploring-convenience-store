@@ -1,0 +1,10 @@
+Name1,Name2,Similarity
+water_a,banana_a,0.5989
+water_a,banana_b,0.5933
+water_a,banana_c,0.5795
+water_a,pen_a,0.6219
+water_a,pen_b,0.6796
+water_a,pen_c,0.6237
+water_a,water_a,1.0000
+water_a,water_b,0.7638
+water_a,water_c,0.7176
