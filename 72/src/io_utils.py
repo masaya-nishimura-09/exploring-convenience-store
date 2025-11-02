@@ -95,19 +95,21 @@ def clear_terminal():
     terminal_height = shutil.get_terminal_size().lines
     # 高さ分の改行を出力
     print("\n" * terminal_height)
-    
+
 
 # ターミナルにマップと進捗を表示
 def display_map(status, x, y):
     if status.show_output:
         # 画面クリア
-        print("\033[H\033[J", end='')
+        print("\033[H\033[J", end="")
 
         print("-" * 50)
         print()
         print(f"Map:")
         print("\n".join(status.store_map))
-        print(f"\nProgress: {status.shopping_cart.progress}/{status.shopping_cart.item_amount}\n")
+        print(
+            f"\nProgress: {status.shopping_cart.progress}/{status.shopping_cart.item_amount}\n"
+        )
         print(f"Steps: {status.position.steps}\n")
         print(f"Position: ({x}, {y})")
 
@@ -141,7 +143,9 @@ def output_results(status, output_file_path):
         print(items_purchased_text)
         print(f"Initial money: {status.wallet.initial}¥\n")
         print(f"Cash balance: {status.wallet.balance}¥\n")
-        print(f"Is shopping successful?: {status.shopping_cart.is_shopping_successful}\n")
+        print(
+            f"Is shopping successful?: {status.shopping_cart.is_shopping_successful}\n"
+        )
         print(f"Progress: {status.shopping_cart.progress}\n")
         print(f"Steps: {status.position.steps}\n")
         clear_terminal()
@@ -154,7 +158,9 @@ def output_results(status, output_file_path):
         file.write(f"{items_purchased_text}\n")
         file.write(f"Initial money: {status.wallet.initial}¥\n\n")
         file.write(f"Cash balance: {status.wallet.balance}¥\n\n")
-        file.write(f"Is shopping successful?: {status.shopping_cart.is_shopping_successful}\n\n")
+        file.write(
+            f"Is shopping successful?: {status.shopping_cart.is_shopping_successful}\n\n"
+        )
         file.write(f"Progress: {status.shopping_cart.progress}\n\n")
         file.write(f"Steps: {status.position.steps}\n\n")
         file.write(f"Map: \n")
@@ -172,12 +178,13 @@ def save_q_map(status, item_amount):
             with open(os.path.join(root_dir, f"input/q/{i}/q{j}.txt"), "w") as f:
                 for k in range(status.position.vertical):
                     line = " ".join(
-                        f"{status.q_map[i][j][k][l]:.3f}" for l in range(status.position.horizontal)
+                        f"{status.q_map[i][j][k][l]:.3f}"
+                        for l in range(status.position.horizontal)
                     )
                     f.write(line + "\n")
 
 
-# 類似度しきい値を返す 
+# 類似度しきい値を返す
 def get_similarity_threshold():
     root_dir = get_root_dir()
     config_path = os.path.join(root_dir, "config.json")
@@ -188,6 +195,6 @@ def get_similarity_threshold():
 
 def write_image_processing_result(correct_name, correct_symbol, item_name, item_symbol):
     root_dir = get_root_dir()
-    with open(os.path.join(root_dir, "output/image_processing_result.csv"), "w") as f:
+    with open(os.path.join(root_dir, "output/image_processing_result.csv"), "a") as f:
         csv_writer = csv.writer(f)
         csv_writer.writerow([correct_name, correct_symbol, item_name, item_symbol])
