@@ -2,7 +2,6 @@
 
 import datetime
 import json
-import time
 import os
 import shutil
 import csv
@@ -193,6 +192,7 @@ def get_similarity_threshold():
     return config["similarity_threshold"]
 
 
+# 画像処理結果をCSVに書き込み
 def write_image_processing_result(correct_name, correct_symbol, item_name, item_symbol):
     root_dir = get_root_dir()
     with open(os.path.join(root_dir, "output/image_processing_result.csv"), "a") as f:
