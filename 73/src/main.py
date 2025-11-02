@@ -3,6 +3,7 @@ from status import Status, Position, Wallet, ShoppingCart
 from shopper import Shopper
 from io_utils import load_config, create_output_file, get_q_map, get_shopping_list, output_results, save_q_map
 from map import map_data
+from verify_image_processing import verify_image_processing
 
 # 1, 設定ファイルからパラメータを取得
 config = load_config()
@@ -50,3 +51,6 @@ output_results(status, output_file_path)
 
 # 11, Qマップを保存
 save_q_map(status, config["item_amount"])
+
+# 12, 画像認識の正確性を評価
+verify_image_processing(status.shopping_cart.cart)

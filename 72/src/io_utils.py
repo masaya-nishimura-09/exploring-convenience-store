@@ -110,7 +110,13 @@ def display_map(status, x, y):
             f"\nProgress: {status.shopping_cart.progress}/{status.shopping_cart.item_amount}\n"
         )
         print(f"Steps: {status.position.steps}\n")
-        print(f"Position: ({x}, {y})")
+        print(f"Position: ({x}, {y})\n")
+        print("Cart:")
+        for i in status.shopping_cart.cart:
+            if i is not None:
+                print(
+                    f"{{ Symbol: {i['symbol']}, Name: {i['name']}, Price: {i['price']}¥ }}"
+                )
 
 
 # 最終結果を出力
