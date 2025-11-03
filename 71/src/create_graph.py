@@ -24,8 +24,8 @@ def create_graph():
         plt.ylabel("Similarity", fontsize=16)
 
         # x軸のラベルを少し回転
-        plt.xticks(rotation=45, fontsize=12)
-        plt.yticks(fontsize=12)
+        plt.xticks(rotation=60, fontsize=9)
+        plt.yticks(fontsize=9)
 
         # グリッドを表示（任意）
         plt.grid(axis="y", linestyle="--", alpha=0.7)
