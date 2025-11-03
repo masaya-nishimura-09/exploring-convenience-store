@@ -9,7 +9,7 @@
   "show_output": true,
   "similarity_threshold": 0.7,
   "title": "Parallel Q update method",
-  "item_amount": 13,
+  "item_amount": 8,
   "runs_per_set": 100,
   "sets": 4
 }

@@ -1,39 +1,7 @@
-.DS_Store
+**/.DS_Store
 
 # 出力ファイルは大きいので追跡しない。
-./61/output/*
-./61a/output/*
-./61b/output/*
-./62/output/*
-./63/output/*
-./64/output/*
-./65/output/*
-./65/data/*
-./66/output/*
-./67/output/*
-./68/output/*
-./69/output/*
-./70/output/*
-./71/output/*
-./72/output/*
-./73/output/*
-./74/output/*
+**/output/
 
 # 実行環境（venv）は追跡しない。
-./61/venv/*
-./61a/venv/*
-./61b/venv/*
-./62/venv/*
-./63/venv/*
-./64/venv/*
-./65/venv/*
-./65/venv/*
-./66/venv/*
-./67/venv/*
-./68/venv/*
-./69/venv/*
-./70/venv/*
-./71/venv/*
-./72/venv/*
-./73/venv/*
-./74/venv/*
+**/venv/
