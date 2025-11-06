@@ -7,7 +7,7 @@
   "starting_y": 4,
   "prefer_lower_price_items": true,
   "show_output": true,
-  "similarity_threshold": 0.7,
+  "similarity_threshold": 0.9,
   "title": "Parallel Q update method",
   "item_amount": 8,
   "runs_per_set": 100,

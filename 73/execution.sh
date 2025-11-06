@@ -35,6 +35,8 @@ mkdir -p output/tmp_data
 for i in $(seq 0 $((sets - 1))); do
     mkdir -p output/data/$i
 done  
+touch output/image_processing_result.csv
+echo "correct_name,correct_symbol,item_name,item_symbol" > output/image_processing_result.csv
 
 # 複数セット実行
 for j in $(seq 0 $((sets - 1))); do
