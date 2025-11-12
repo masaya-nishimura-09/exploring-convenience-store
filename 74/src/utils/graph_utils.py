@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import re
 import os
-import json
-from io_utils import get_root_dir
+from config_utils import *
 
 
 def create_list_of_steps(data_dir):
@@ -34,20 +33,18 @@ def create_graph(steps, graph_title, file_name):
 
 
 # 設定ファイルを読み込む
-root_dir = get_root_dir()
-with open(os.path.join(root_dir, "config.json"), "r", encoding="utf-8") as file:
-    data = json.load(file)
+version = get_project_version()
+runs_per_set = get_runs_per_set()
+sets = get_sets()
+title = get_title()
 
-version = data["version"]
-runs_per_set = data["runs_per_set"]
-sets = data["sets"]
-title = data["title"]
-version = data["version"]
+root_dir = get_root_dir()
 
 for num_of_set in range(sets):
     data_dir = os.path.join(root_dir, f"output/data/{num_of_set}")
     steps = create_list_of_steps(data_dir)
 
-    graph_title = f"{version}"
-    file_name = os.path.join(root_dir, f"output/graphs/{version}_graph_{num_of_set}.png")
-    create_graph(steps, graph_title, file_name)
+    file_name = os.path.join(
+        root_dir, f"output/graphs/{version}_graph_{num_of_set}.png"
+    )
+    create_graph(steps, version, file_name)

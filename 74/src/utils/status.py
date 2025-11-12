@@ -1,9 +1,16 @@
-# 状態管理クラス群
-
-
 # 全体状態管理クラス
 class Status:
-    def __init__(self, position, wallet, shopping_cart, shopping_list, q_map, epsilon, show_output, store_map):
+    def __init__(
+        self,
+        position,
+        wallet,
+        shopping_cart,
+        shopping_list,
+        q_map,
+        epsilon,
+        show_output,
+        store_map,
+    ):
         self.position = position
         self.wallet = wallet
         self.shopping_cart = shopping_cart
@@ -13,7 +20,6 @@ class Status:
         self.show_output = show_output
         self.store_map = store_map
 
-    
     def give_max_q_value(self, item_id, direction):
         self.q_map[item_id][direction][self.position.x][self.position.y] = 1000
 
@@ -31,14 +37,13 @@ class Position:
         self.vertical = vertical
         self.horizontal = horizontal
 
-    
     # 位置情報更新
     def move_to(self, x, y, d):
         self.prev_x = self.x
         self.prev_y = self.y
         self.x = x
         self.y = y
-        self.prev_d = d  
+        self.prev_d = d
         self.steps += 1
 
 
@@ -59,6 +64,5 @@ class ShoppingCart:
         self.is_shopping_successful = True
         self.similarity_threshold = similarity_threshold
 
-    
     def update_progress(self):
         self.progress += 1

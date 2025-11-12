@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# 実行環境を有効化
+source venv/bin/activate
+
 # 1セットあたりの実行回数
 runs_per_set=$(python3 -c "import json; data=json.load(open('./config.json')); print(data['runs_per_set'])")
 

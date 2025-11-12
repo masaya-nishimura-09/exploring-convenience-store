@@ -22,7 +22,5 @@
 
 ## 実行方法
 
-- $ python3 -m venv venv
-- $ source venv/bin/activate
-- $ pip install torch torchvision pillow open_clip_torch matplotlib pandas
-- $ ./execution.sh
+- $ ./bash/setup.sh
+- $ ./bash/execution.sh
