@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import re
 import os
-import json
-from io_utils import get_root_dir
+from utils.io_utils import get_root_dir, load_config
 
 
 def create_list_of_steps(data_dir):
@@ -20,7 +19,7 @@ def create_list_of_steps(data_dir):
     return steps
 
 
-def create_graph(steps, graph_title, file_name):
+def create_image(steps, graph_title, file_name):
     plt.plot(steps, marker="o", linestyle="-")
     plt.xlabel("Number of attempts", fontsize=18)
     plt.ylabel("Steps", fontsize=20)
@@ -33,21 +32,21 @@ def create_graph(steps, graph_title, file_name):
     plt.close()
 
 
-# 設定ファイルを読み込む
-root_dir = get_root_dir()
-with open(os.path.join(root_dir, "config.json"), "r", encoding="utf-8") as file:
-    data = json.load(file)
+def create_graphs():
+    config = load_config()
+    version = config["version"]
+    sets = config["sets"]
+    root_dir = get_root_dir()
 
-version = data["version"]
-runs_per_set = data["runs_per_set"]
-sets = data["sets"]
-title = data["title"]
-version = data["version"]
+    for num_of_set in range(sets):
+        data_dir = os.path.join(root_dir, f"output/data/{num_of_set}")
+        steps = create_list_of_steps(data_dir)
 
-for num_of_set in range(sets):
-    data_dir = os.path.join(root_dir, f"output/data/{num_of_set}")
-    steps = create_list_of_steps(data_dir)
+        file_name = os.path.join(
+            root_dir, f"output/graphs/{version}_graph_{num_of_set}.png"
+        )
+        create_image(steps, version, file_name)
 
-    graph_title = f"{version}"
-    file_name = os.path.join(root_dir, f"output/graphs/{version}_graph_{num_of_set}.png")
-    create_graph(steps, graph_title, file_name)
+
+if __name__ == "__create_graphs__":
+    create_graphs()

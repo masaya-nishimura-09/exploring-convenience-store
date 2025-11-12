@@ -2,10 +2,11 @@
 
 import os
 import random
-from q_learning import q_comparison, update_all_q_map
-from io_utils import write_position_to_file, get_root_dir, display_map
 from operator import itemgetter
-from utils.image_utils import is_same_product
+from utils.io_utils import write_position_to_file
+from utils.display_utils import display_map
+from utils.q_map_utils import q_comparison, update_all_q_map
+from utils.shopping_utils import item_checker
 
 
 def get_next_direction(status):
@@ -48,80 +49,6 @@ def get_next_x_y(status, direction):
     return next_x, next_y
 
 
-# 商品をかごに入れるべきか判別
-def item_checker(status, tile):
-    root_dir = get_root_dir()
-    item_path = os.path.join(root_dir, f"input/item_images/{tile}.jpg")
-    atm_path = next(
-        (item["path"] for item in status.shopping_list if item["name"] == "atm.jpg"), ""
-    )
-    cashier_path = next(
-        (
-            item["path"]
-            for item in status.shopping_list
-            if item["name"] == "cashier.jpg"
-        ),
-        "",
-    )
-
-    # まだ何も見つけてない　かつ　見つけたものがatmでない時
-    if status.shopping_cart.progress == 0 and not is_same_product(
-        item_path, atm_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # atmを見つけた後　かつ　見つけたものがatmの時
-    if status.shopping_cart.progress > 0 and is_same_product(
-        item_path, atm_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
-    if status.shopping_cart.progress < len(
-        status.shopping_list
-    ) - 1 and is_same_product(
-        item_path, cashier_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
-    for s in status.shopping_list:
-        if is_same_product(
-            item_path, s["path"], status.shopping_cart.similarity_threshold
-        ):
-            item_name = s["name"]
-            if any(
-                c is not None and item_name == c["name"]
-                for c in status.shopping_cart.cart
-            ):
-                return False, 0
-
-            pick_item(status, s, tile)
-            return True, s["id"]
-
-    return False, 0
-
-
-# 商品をカゴに入れる
-def pick_item(status, item, tile):
-    price = 0
-    if item["name"] == "atm.jpg" or item["name"] == "cashier.jpg":
-        price = 0
-    else:
-        price = random.randint(100, 10000)
-
-    # カゴに見つけた商品を入れる
-    for i in range(len(status.shopping_list)):
-        if status.shopping_cart.cart[i] == None:
-            status.shopping_cart.cart[i] = {
-                "category": item["category"],
-                "symbol": tile,
-                "name": item["name"],
-                "price": price,
-            }
-            break
-
-
 class Shopper:
     def __init__(self, status):
         self.status = status
@@ -162,7 +89,7 @@ class Shopper:
             display_map(status, next_x, next_y)
 
             # 出力ファイルに書き込み
-            write_position_to_file(status.show_output, file, next_x, next_y)
+            write_position_to_file(file, next_x, next_y)
             return
 
         # 次の場所がスタート地点のとき

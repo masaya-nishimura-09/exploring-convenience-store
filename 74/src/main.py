@@ -1,16 +1,21 @@
 import random
-from status import Status, Position, Wallet, ShoppingCart
-from shopper import Shopper
-from io_utils import (
+from utils.status import Status, Position, Wallet, ShoppingCart
+from models.shopper import Shopper
+from utils.io_utils import (
     load_config,
     create_output_file,
-    get_q_map,
-    get_shopping_list,
-    output_results,
-    save_q_map,
+    write_results,
 )
+from utils.shopping_utils import (
+    get_shopping_list,
+    get_shopping_list_str,
+    get_cart_str,
+    get_items_purchased_str,
+)
+from utils.q_map_utils import get_q_map, save_q_map
+from utils.display_utils import display_results
+from utils.image_utils import verify_image_processing
 from libs.map import map_data
-from verify_image_processing import verify_image_processing
 
 
 def main():
@@ -61,7 +66,16 @@ def main():
     shopper.checkout()
 
     # 10, 最終結果出力
-    output_results(status, output_file_path)
+    shopping_list_str = get_shopping_list_str(status.shopping_list)
+    cart_str = get_cart_str(status.shopping_cart.cart)
+    items_purchased_str = get_items_purchased_str(status.shopping_cart.items_purchased)
+
+    write_results(
+        status, output_file_path, shopping_list_str, cart_str, items_purchased_str
+    )
+    display_results(
+        status, output_file_path, shopping_list_str, cart_str, items_purchased_str
+    )
 
     # 11, Qマップを保存
     save_q_map(status, config["item_amount"])
