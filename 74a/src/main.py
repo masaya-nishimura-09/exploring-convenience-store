@@ -1,17 +1,21 @@
 import random
-from status import Status, Position, Wallet, ShoppingCart
-from shopper import Shopper
-from io_utils import load_config, create_output_file, get_q_map, get_shopping_list, output_results, save_q_map
-from map import map_data
-from verify_image_processing import verify_image_processing
-
+from models.shopper import Shopper
+from libs.map import map_data
+from utils.image_utils import verify_image_processing
+from utils.output_utils import create_output_file, write_results, write_results_csv
+from utils.shopping_utils import get_shopping_list
+from utils.q_map_utils import get_q_map, save_q_map
+from utils.config_utils import load_config
+from utils.status import Status, Position, Wallet, ShoppingCart
+from utils.display_utils import display_results
+from utils.graph_utils import create_graphs
 
 def main():
     # 1, 設定ファイルからパラメータを取得
     config = load_config()
 
     # 2, 出力用ファイル準備
-    output_file_path = create_output_file(config["version"])
+    output_file_path = create_output_file()
 
     # 3, 地図を読み込む
     store_map = map_data
@@ -20,10 +24,15 @@ def main():
     shopping_list = get_shopping_list()
 
     # 5, Qマップを取得
-    q_map = get_q_map(config["item_amount"], config["vertical"])
+    q_map = get_q_map()
 
     # 6, ステータスの初期化
-    position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"])
+    position = Position(
+        config["starting_x"],
+        config["starting_y"],
+        config["vertical"],
+        config["horizontal"],
+    )
     wallet = Wallet(random.randint(0, 100000))
     shopping_cart = ShoppingCart(config["item_amount"], config["similarity_threshold"])
     status = Status(
@@ -34,7 +43,7 @@ def main():
         q_map=q_map,
         epsilon=config["epsilon"],
         show_output=config["show_output"],
-        store_map=store_map
+        store_map=store_map,
     )
 
     # 7, Shopperの初期化
@@ -49,10 +58,13 @@ def main():
     shopper.checkout()
 
     # 10, 最終結果出力
-    output_results(status, output_file_path)
+    write_results(status, output_file_path)
+    display_results(status, output_file_path)
+    write_results_csv()
+    create_graphs()
 
     # 11, Qマップを保存
-    save_q_map(status, config["item_amount"])
+    save_q_map(status)
 
     # 12, 画像認識の正確性を評価
     verify_image_processing(status.shopping_cart.cart)
