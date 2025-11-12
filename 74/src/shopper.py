@@ -5,7 +5,7 @@ import random
 from q_learning import q_comparison, update_all_q_map
 from io_utils import write_position_to_file, get_root_dir, display_map
 from operator import itemgetter
-from color_utils import is_same_product
+from utils.image_utils import is_same_product
 
 
 def get_next_direction(status):
@@ -52,30 +52,50 @@ def get_next_x_y(status, direction):
 def item_checker(status, tile):
     root_dir = get_root_dir()
     item_path = os.path.join(root_dir, f"input/item_images/{tile}.jpg")
-    atm_path = next((item["path"] for item in status.shopping_list if item["name"] == "atm.jpg"), "")
-    cashier_path = next((item["path"] for item in status.shopping_list if item["name"] == "cashier.jpg"), "")
+    atm_path = next(
+        (item["path"] for item in status.shopping_list if item["name"] == "atm.jpg"), ""
+    )
+    cashier_path = next(
+        (
+            item["path"]
+            for item in status.shopping_list
+            if item["name"] == "cashier.jpg"
+        ),
+        "",
+    )
 
     # まだ何も見つけてない　かつ　見つけたものがatmでない時
-    if status.shopping_cart.progress == 0 and not is_same_product(item_path, atm_path):
+    if status.shopping_cart.progress == 0 and not is_same_product(
+        item_path, atm_path, status.shopping_cart.similarity_threshold
+    ):
         return False, 0
 
     # atmを見つけた後　かつ　見つけたものがatmの時
-    if status.shopping_cart.progress > 0 and is_same_product(item_path, atm_path):
+    if status.shopping_cart.progress > 0 and is_same_product(
+        item_path, atm_path, status.shopping_cart.similarity_threshold
+    ):
         return False, 0
 
     # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
-    if status.shopping_cart.progress < len(status.shopping_list) - 1 and is_same_product(
-        item_path, cashier_path
+    if status.shopping_cart.progress < len(
+        status.shopping_list
+    ) - 1 and is_same_product(
+        item_path, cashier_path, status.shopping_cart.similarity_threshold
     ):
         return False, 0
 
     # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
     for s in status.shopping_list:
-        if is_same_product(item_path, s["path"]):
+        if is_same_product(
+            item_path, s["path"], status.shopping_cart.similarity_threshold
+        ):
             item_name = s["name"]
-            if any(c is not None and item_name == c["name"] for c in status.shopping_cart.cart):
+            if any(
+                c is not None and item_name == c["name"]
+                for c in status.shopping_cart.cart
+            ):
                 return False, 0
-            
+
             pick_item(status, s, tile)
             return True, s["id"]
 
@@ -106,7 +126,6 @@ class Shopper:
     def __init__(self, status):
         self.status = status
 
-
     # 歩く
     def walk(self, file):
         status = self.status
@@ -115,11 +134,16 @@ class Shopper:
         next_x, next_y = get_next_x_y(status, next_direction)
 
         # 次の場所がマップの範囲外の時は何もしない
-        if not (next_x >= 0 and next_y >= 0 and next_x < status.position.vertical and next_y < status.position.horizontal):
+        if not (
+            next_x >= 0
+            and next_y >= 0
+            and next_x < status.position.vertical
+            and next_y < status.position.horizontal
+        ):
             return
-        
+
         next_tile = status.store_map[next_x][next_y]
-        
+
         # Qマップを更新
         update_all_q_map(status, next_direction)
 
@@ -128,13 +152,13 @@ class Shopper:
 
             # マップを更新
             row = list(status.store_map[next_x])
-            row[next_y] = '*'
-            status.store_map[next_x] = ''.join(row)
+            row[next_y] = "*"
+            status.store_map[next_x] = "".join(row)
 
             # 位置情報更新
             status.position.move_to(next_x, next_y, next_direction)
 
-            #ターミナルにマップを表示
+            # ターミナルにマップを表示
             display_map(status, next_x, next_y)
 
             # 出力ファイルに書き込み
@@ -154,7 +178,6 @@ class Shopper:
                 status.shopping_cart.update_progress()
                 status.give_max_q_value(item_id, next_direction)
             return
-        
 
     # 会計をし、最安値の商品を購入
     def checkout(self):
@@ -179,7 +202,9 @@ class Shopper:
                     self.status.shopping_cart.items_purchased.append(
                         {"name": item["name"], "price": item["price"]}
                     )
-                    self.status.wallet.balance = self.status.wallet.balance - item["price"]
+                    self.status.wallet.balance = (
+                        self.status.wallet.balance - item["price"]
+                    )
                     category_done.append(item["category"])
                 else:
                     self.status.shopping_cart.is_shopping_successful = False

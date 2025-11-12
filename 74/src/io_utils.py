@@ -189,15 +189,6 @@ def save_q_map(status, item_amount):
                     f.write(line + "\n")
 
 
-# 類似度しきい値を返す
-def get_similarity_threshold():
-    root_dir = get_root_dir()
-    config_path = os.path.join(root_dir, "config.json")
-    with open(config_path, "r", encoding="utf-8") as file:
-        config = json.load(file)
-    return config["similarity_threshold"]
-
-
 # 画像処理結果をCSVに書き込み
 def write_image_processing_result(correct_name, correct_symbol, item_name, item_symbol):
     root_dir = get_root_dir()

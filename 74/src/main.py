@@ -1,8 +1,15 @@
 import random
 from status import Status, Position, Wallet, ShoppingCart
 from shopper import Shopper
-from io_utils import load_config, create_output_file, get_q_map, get_shopping_list, output_results, save_q_map
-from map import map_data
+from io_utils import (
+    load_config,
+    create_output_file,
+    get_q_map,
+    get_shopping_list,
+    output_results,
+    save_q_map,
+)
+from libs.map import map_data
 from verify_image_processing import verify_image_processing
 
 
@@ -23,7 +30,12 @@ def main():
     q_map = get_q_map(config["item_amount"], config["vertical"])
 
     # 6, ステータスの初期化
-    position = Position(config["starting_x"], config["starting_y"], config["vertical"], config["horizontal"])
+    position = Position(
+        config["starting_x"],
+        config["starting_y"],
+        config["vertical"],
+        config["horizontal"],
+    )
     wallet = Wallet(random.randint(0, 100000))
     shopping_cart = ShoppingCart(config["item_amount"], config["similarity_threshold"])
     status = Status(
@@ -34,7 +46,7 @@ def main():
         q_map=q_map,
         epsilon=config["epsilon"],
         show_output=config["show_output"],
-        store_map=store_map
+        store_map=store_map,
     )
 
     # 7, Shopperの初期化
