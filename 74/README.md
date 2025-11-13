@@ -22,5 +22,5 @@
 
 ## 実行方法
 
-- $ ./bash/setup.sh
-- $ ./bash/execution.sh
+- $ ./scripts/setup.sh
+- $ ./scripts/execution.sh

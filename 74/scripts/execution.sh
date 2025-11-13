@@ -53,10 +53,10 @@ for j in $(seq 0 $((sets - 1))); do
 done
 
 # csvに書き込み
-python3 src/utils/write_results_csv.py
+python3 write_results_csv.py
 
 # グラフを作成
-python3 src/utils/create_graphs.py
+python3 create_graphs.py
 
 # 設定ファイルを output フォルダにコピー
 cp config.json output/
