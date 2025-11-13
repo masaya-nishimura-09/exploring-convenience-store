@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import re
 import os
-from utils.io_utils import get_root_dir, load_config
+from src.utils.io_utils import get_root_dir, load_config
 
 
 def create_list_of_steps(data_dir):

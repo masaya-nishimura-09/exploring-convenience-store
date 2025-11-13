@@ -18,5 +18,5 @@ map_data = [
     "          APDHLJQABBBOGRHPAHQBPDCRIIMENPF         ",
     "                                                  ",
     "                                                  ",
-    "    1     JSFGGHDAQDPHLMSFSEPIKPSGOSHDYLJ    $    "
+    "    1     JSFGGHDAQDPHLMSFSEPIKPSGOSHDYLJ    $    ",
 ]
