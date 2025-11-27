@@ -1,0 +1,22 @@
+map_data = [
+    "--        TDHEFVTGUDQRIFIGKJABGQICLQQDHFQ         ",
+    "--                                                ",
+    "--                                                ",
+    "--                                                ",
+    "--        GXQUFBCHGUJHSRMLHBBUNABAKCLRSLW         ",
+    "--        U                             H         ",
+    "--        HDBRLJPNVACQVIEMUKVQEATHKIHMBEB         ",
+    "--                                                ",
+    "--                                                ",
+    "--        DCADGVCGFTONPSCSTBEKZRPAULQPOFD         ",
+    "          C                             Q         ",
+    "          RJFUQCSGFTSIDOCNBNFNENASMJOUBTO         ",
+    "                                                  ",
+    "                                                  ",
+    "          TNBJNDFPPCMMEMGVSKTPBFFOSMJQBVF         ",
+    "          V                             P         ",
+    "          APDHLJQABBBOGRHPAHQBPDCRIIMENPF         ",
+    "                                                  ",
+    "                                                  ",
+    "    1     JSFGGUDAQDPHLVSFSVPIKPSGOSHDYLJ    $    "
+]

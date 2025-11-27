@@ -1,0 +1,20 @@
+A       CCCCCCCCCCDDDDDDDDDDDEEEEEEEEEE          X
+A                                                X
+A                                                X
+A                                                X
+A       FFFFFFFFFFGGGGGGGGGGGHHHHHHHHHH          Y
+A       I                             H          Y
+A       IIIIIIIIIIJJJJJJJJJJJKKKKKKKKKK          Y
+A                                                Y
+B                                                Z
+B       LLLLLLLLLLMMMMMMMMMMMNNNNNNNNNN          Z
+B       O                             N          Z
+B       OOOOOOOOOOPPPPPPPPPPPQQQQQQQQQQ          Z
+B                                                $
+B                                                 
+B       RRRRRRRRRRSSSSSSSSSSSTTTTTTTTTT           
+B       U                             T           
+B       UUUUUUUUUUVVVVVVVVVVWWWWWWWWWWW           
+                                                  
+---------------------------------------           
+---------------------------------------      1    
