@@ -71,9 +71,13 @@ def item_picked_checker(item, cart):
 
 
 # 商品をかごに入れるべきか判別
-def item_checker(status, tile):
+def item_checker(status, next_items):
     root_dir = get_root_dir()
-    item_path = os.path.join(root_dir, f"input/item_images/{tile}.jpg")
+
+    item_paths = []
+    for item in next_items:
+        item_paths.append({"symbol": item, "path": os.path.join(root_dir, f"input/item_images/{item}.jpg")})
+
     atm_path = next(
         (item["path"] for item in status.shopping_list if item["name"] == "atm.jpg"), ""
     )
@@ -86,46 +90,47 @@ def item_checker(status, tile):
         "",
     )
 
-    # まだ何も見つけてない　かつ　見つけたものがatmでない時
-    if status.shopping_cart.progress == 0 and not is_same_product(
-        item_path, atm_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # atmを見つけた後　かつ　見つけたものがatmの時
-    if status.shopping_cart.progress > 0 and is_same_product(
-        item_path, atm_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
-    if status.shopping_cart.progress < len(
-        status.shopping_list
-    ) - 1 and is_same_product(
-        item_path, cashier_path, status.shopping_cart.similarity_threshold
-    ):
-        return False, 0
-
-    # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
-    for s in status.shopping_list:
-        if is_same_product(
-            item_path, s["path"], status.shopping_cart.similarity_threshold
+    for item_path in item_paths:
+        # まだ何も見つけてない　かつ　見つけたものがatmでない時
+        if status.shopping_cart.progress == 0 and not is_same_product(
+            item_path["path"], atm_path, status.shopping_cart.similarity_threshold
         ):
-            item_name = s["name"]
-            if any(
-                c is not None and item_name == c["name"]
-                for c in status.shopping_cart.cart
-            ):
-                return False, 0
+            return False, 0
 
-            pick_item(status, s, tile)
-            return True, s["id"]
+        # atmを見つけた後　かつ　見つけたものがatmの時
+        if status.shopping_cart.progress > 0 and is_same_product(
+            item_path["path"], atm_path, status.shopping_cart.similarity_threshold
+        ):
+            return False, 0
+
+        # レジ以外に見つけてないものがある　かつ　見つけたものがレジの時
+        if status.shopping_cart.progress < len(
+            status.shopping_list
+        ) - 1 and is_same_product(
+            item_path["path"], cashier_path, status.shopping_cart.similarity_threshold
+        ):
+            return False, 0
+
+        # 見つけた商品が買い物リストにある　かつ　まだカゴに入れてない時
+        for s in status.shopping_list:
+            if is_same_product(
+                item_path["path"], s["path"], status.shopping_cart.similarity_threshold
+            ):
+                item_name = s["name"]
+                if any(
+                    c is not None and item_name == c["name"]
+                    for c in status.shopping_cart.cart
+                ):
+                    return False, 0
+
+                pick_item(status, s, item_path["symbol"])
+                return True, s["id"]
 
     return False, 0
 
 
 # 商品をカゴに入れる
-def pick_item(status, item, tile):
+def pick_item(status, item, symbol):
     price = 0
     if item["name"] == "atm.jpg" or item["name"] == "cashier.jpg":
         price = 0
@@ -137,7 +142,7 @@ def pick_item(status, item, tile):
         if status.shopping_cart.cart[i] == None:
             status.shopping_cart.cart[i] = {
                 "category": item["category"],
-                "symbol": tile,
+                "symbol": symbol,
                 "name": item["name"],
                 "price": price,
             }

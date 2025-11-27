@@ -46,36 +46,31 @@ def get_steps_data(sets, runs_per_set):
 
 
 # CSVに歩数の最小値、最大値、平均値を書き込む
-def write_results_csv():
-    config = load_config()
-    root_dir = get_root_dir()
-    version = config["version"]
-    sets = config["sets"]
-    runs_per_set = config["runs_per_set"]
-    date_str = get_date_str()
-    min_steps, max_steps, average_steps = get_steps_data(sets, runs_per_set)
+config = load_config()
+root_dir = get_root_dir()
+version = config["version"]
+sets = config["sets"]
+runs_per_set = config["runs_per_set"]
+date_str = get_date_str()
+min_steps, max_steps, average_steps = get_steps_data(sets, runs_per_set)
 
-    with open(
-        os.path.join(root_dir, "output/stats.csv"), "w", newline="", encoding="utf-8"
-    ) as f:
-        csv_writer = csv.writer(f)
-        csv_writer.writerow(
-            ["Version", "Date", "Runs_per_set", "Sets", "Min", "Max", "Average"]
-        )
+with open(
+    os.path.join(root_dir, "output/stats.csv"), "w", newline="", encoding="utf-8"
+) as f:
+    csv_writer = csv.writer(f)
+    csv_writer.writerow(
+        ["Version", "Date", "Runs_per_set", "Sets", "Min", "Max", "Average"]
+    )
 
-        # 結果をcsvファイルに書き込み
-        csv_writer.writerow(
-            [
-                version,
-                date_str,
-                runs_per_set,
-                sets,
-                min_steps,
-                max_steps,
-                f"{average_steps:.2f}",
-            ]
-        )
-
-
-if __name__ == "__write_results_csv__":
-    write_results_csv()
+    # 結果をcsvファイルに書き込み
+    csv_writer.writerow(
+        [
+            version,
+            date_str,
+            runs_per_set,
+            sets,
+            min_steps,
+            max_steps,
+            f"{average_steps:.2f}",
+        ]
+    )

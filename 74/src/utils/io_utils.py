@@ -65,7 +65,7 @@ def write_results(
         file.write(f"Map: \n")
         for i in range(status.position.vertical):
             for j in range(status.position.horizontal):
-                file.write(f"{status.store_map[i][j]}")
+                file.write(f"{status.store_map[0][i][j]}")
             file.write("\n")
 
 

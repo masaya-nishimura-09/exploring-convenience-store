@@ -17,7 +17,7 @@ def display_map(status, x, y):
         print("-" * 50)
         print()
         print(f"Map:")
-        print("\n".join(status.store_map))
+        print("\n".join(status.store_map[0]))
         print(
             f"\nProgress: {status.shopping_cart.progress}/{status.shopping_cart.item_amount}\n"
         )

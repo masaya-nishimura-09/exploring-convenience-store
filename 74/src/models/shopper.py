@@ -69,18 +69,20 @@ class Shopper:
         ):
             return
 
-        next_tile = status.store_map[next_x][next_y]
+        next_items = []
+        for n in range(3):
+            next_items.append(status.store_map[n][next_x][next_y])
 
         # Qマップを更新
         update_all_q_map(status, next_direction)
 
         # 次の場所が通行可能なマスのとき
-        if next_tile == " " or next_tile == "*":
+        if next_items[0] == " " or next_items[0] == "*":
 
             # マップを更新
-            row = list(status.store_map[next_x])
+            row = list(status.store_map[0][next_x])
             row[next_y] = "*"
-            status.store_map[next_x] = "".join(row)
+            status.store_map[0][next_x] = "".join(row)
 
             # 位置情報更新
             status.position.move_to(next_x, next_y, next_direction)
@@ -93,12 +95,12 @@ class Shopper:
             return
 
         # 次の場所がスタート地点のとき
-        elif status.store_map[next_x][next_y] == "1":
+        elif status.store_map[0][next_x][next_y] == "1":
             return
 
         # 次の場所に商品がある時
         else:
-            true_or_false, item_id = item_checker(status, next_tile)
+            true_or_false, item_id = item_checker(status, next_items)
             if true_or_false:
 
                 # マップと進捗を更新
