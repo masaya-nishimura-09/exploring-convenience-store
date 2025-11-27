@@ -32,21 +32,17 @@ def create_image(steps, graph_title, file_name):
     plt.close()
 
 
-def create_graphs():
-    config = load_config()
-    version = config["version"]
-    sets = config["sets"]
-    root_dir = get_root_dir()
+config = load_config()
+version = config["version"]
+sets = config["sets"]
+root_dir = get_root_dir()
 
-    for num_of_set in range(sets):
-        data_dir = os.path.join(root_dir, f"output/data/{num_of_set}")
-        steps = create_list_of_steps(data_dir)
+for num_of_set in range(sets):
+    data_dir = os.path.join(root_dir, f"output/data/{num_of_set}")
+    steps = create_list_of_steps(data_dir)
 
-        file_name = os.path.join(
-            root_dir, f"output/graphs/{version}_graph_{num_of_set}.png"
-        )
-        create_image(steps, version, file_name)
+    file_name = os.path.join(
+        root_dir, f"output/graphs/{version}_graph_{num_of_set}.png"
+    )
+    create_image(steps, version, file_name)
 
-
-if __name__ == "__create_graphs__":
-    create_graphs()

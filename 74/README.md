@@ -18,9 +18,16 @@
 - similarity_threshold: 類似度のしきい値
 - title: 実験の手法
 - runs_per_set: 1 セットあたりの実行回数,
-- sets: セット数
+  - sets: セット数
+
+## 前回からの変更点
+
+    - マップを3次元に変更。（マップのリストの長さが3つになる）
+    - アイテムの数は3倍になるが、種類は同じ。
+    - 各層で商品の配置は違う。
+    - 対象商品が複数存在することもある。
 
 ## 実行方法
 
-- $ ./scripts/setup.sh
-- $ ./scripts/execution.sh
+    - $ ./scripts/setup.sh
+    - $ ./scripts/execution.sh
