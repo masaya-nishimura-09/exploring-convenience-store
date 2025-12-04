@@ -68,6 +68,7 @@ class Shopper:
         ):
             return
 
+        # 棚3層分の商品（アルファベット）を取得し、リスト化
         next_items = []
         for n in range(3):
             next_items.append(status.store_map[n][next_x][next_y])
@@ -91,6 +92,7 @@ class Shopper:
 
             # 出力ファイルに書き込み
             write_position_to_file(file, next_x, next_y)
+
             return
 
         # 次の場所がスタート地点のとき
@@ -105,7 +107,9 @@ class Shopper:
                 # マップと進捗を更新
                 status.shopping_cart.update_progress()
                 status.give_max_q_value(item_id, next_direction)
+
             return
+
 
     # 会計をし、最安値の商品を購入
     def checkout(self):
