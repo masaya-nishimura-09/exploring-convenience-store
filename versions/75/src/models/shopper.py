@@ -4,7 +4,7 @@ import random
 from operator import itemgetter
 from utils.io_utils import write_position_to_file
 from utils.display_utils import display_map
-from utils.q_map_utils import q_comparison, update_all_q_map
+from utils.q_map_utils import q_comparison, update_all_q_map, give_max_q_value, down_grade_q_map
 from utils.shopping_utils import item_checker
 
 
@@ -59,13 +59,14 @@ class Shopper:
         next_direction = get_next_direction(status)
         next_x, next_y = get_next_x_y(status, next_direction)
 
-        # 次の場所がマップの範囲外の時は何もしない
+        # 次の場所がマップの範囲外の時はqマップをダウングレード
         if not (
             next_x >= 0
             and next_y >= 0
             and next_x < status.position.vertical
             and next_y < status.position.horizontal
         ):
+            down_grade_q_map(status, next_direction)
             return
 
         # 棚3層分の商品（アルファベット）を取得し、リスト化
@@ -106,7 +107,7 @@ class Shopper:
 
                 # マップと進捗を更新
                 status.shopping_cart.update_progress()
-                status.give_max_q_value(item_id, next_direction)
+                give_max_q_value(status, item_id, next_direction)
 
             return
 

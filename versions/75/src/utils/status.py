@@ -13,10 +13,6 @@ class Status:
         self.show_output = show_output
         self.store_map = store_map
 
-    
-    def give_max_q_value(self, item_id, direction):
-        self.q_map[item_id][direction][self.position.x][self.position.y] = 1000
-
 
 # 位置情報管理クラス
 class Position:
