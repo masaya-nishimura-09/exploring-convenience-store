@@ -116,6 +116,6 @@ def give_max_q_value(status, item_id, next_direction):
 
 
 # マップ外のQマップを更新
-def down_grade_q_map(status, next_direction):
+def downgrade_q_map(status, next_direction):
     for i in range(len(status.shopping_list)):
         status.q_map[i][next_direction][status.position.x][status.position.y] = -1

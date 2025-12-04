@@ -4,7 +4,7 @@ import random
 from operator import itemgetter
 from utils.io_utils import write_position_to_file
 from utils.display_utils import display_map
-from utils.q_map_utils import q_comparison, update_all_q_map, give_max_q_value, down_grade_q_map
+from utils.q_map_utils import q_comparison, update_all_q_map, give_max_q_value, downgrade_q_map
 from utils.shopping_utils import item_checker
 
 
@@ -66,7 +66,7 @@ class Shopper:
             and next_x < status.position.vertical
             and next_y < status.position.horizontal
         ):
-            down_grade_q_map(status, next_direction)
+            downgrade_q_map(status, next_direction)
             return
 
         # 棚3層分の商品（アルファベット）を取得し、リスト化
