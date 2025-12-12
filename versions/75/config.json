@@ -11,5 +11,6 @@
   "title": "Parallel Q update method",
   "item_amount": 8,
   "runs_per_set": 100,
-  "sets": 4
+  "sets": 4,
+  "max_step": 50000
 }

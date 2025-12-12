@@ -16,18 +16,19 @@ class Status:
 
 # 位置情報管理クラス
 class Position:
-    def __init__(self, x, y, vertical, horizontal):
+    def __init__(self, x, y, vertical, horizontal, max_step):
         self.x = x
         self.y = y
         self.d = 0
         self.steps = 0
+        self.max_step = max_step
         self.prev_x = x
         self.prev_y = y
         self.prev_d = 0
         self.vertical = vertical
         self.horizontal = horizontal
 
-    
+
     # 位置情報更新
     def move_to(self, x, y, d):
         self.prev_x = self.x
@@ -36,6 +37,10 @@ class Position:
         self.y = y
         self.prev_d = d  
         self.steps += 1
+
+
+    def go_to_register(self, item_amount):
+        self.steps = item_amount - 1 
 
 
 # 所持金管理クラス

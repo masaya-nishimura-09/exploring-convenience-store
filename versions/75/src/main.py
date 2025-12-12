@@ -40,6 +40,7 @@ def main():
         config["starting_y"],
         config["vertical"],
         config["horizontal"],
+        config["max_step"],
     )
     wallet = Wallet(random.randint(0, 100000))
     shopping_cart = ShoppingCart(config["item_amount"], config["similarity_threshold"])
