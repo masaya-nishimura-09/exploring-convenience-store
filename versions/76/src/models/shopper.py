@@ -104,6 +104,10 @@ class Shopper:
         elif status.store_map[0][next_x][next_y] == "1":
             return
 
+        # 次の場所に人がいるとき
+        elif status.store_map[0][next_x][next_y] == "!":
+            return
+
         # 次の場所に商品がある時
         else:
             true_or_false, item_id = item_checker(status, next_items)

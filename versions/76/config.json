@@ -1,5 +1,5 @@
 {
-  "version": "75",
+  "version": "76",
   "epsilon": 0.01,
   "vertical": 20,
   "horizontal": 50,
@@ -11,5 +11,6 @@
   "item_amount": 8,
   "runs_per_set": 100,
   "sets": 4,
-  "max_step": 50000
+  "max_step": 50000,
+  "people": 5
 }
