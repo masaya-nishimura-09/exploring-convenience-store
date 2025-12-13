@@ -89,7 +89,7 @@ class Shopper:
             status.position.move_to(next_x, next_y, next_direction)
 
             # もし最大歩数に到達すると、レジに移動->進捗をレジの手前にする
-            if status.positoin.steps >= status.position.max_step:
+            if status.position.steps >= status.position.max_step:
                 status.position.go_to_register(status.shopping_cart.item_amount)
 
             # ターミナルにマップを表示
@@ -102,6 +102,10 @@ class Shopper:
 
         # 次の場所がスタート地点のとき
         elif status.store_map[0][next_x][next_y] == "1":
+            return
+
+        # 次の場所に人がいるとき
+        elif status.store_map[0][next_x][next_y] == "!":
             return
 
         # 次の場所に商品がある時

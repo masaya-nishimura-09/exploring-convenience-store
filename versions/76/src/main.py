@@ -18,6 +18,28 @@ from utils.image_utils import verify_image_processing
 from libs.map import map_data
 
 
+def get_random_position(store_map, vertical, horizontal):
+    x = 0
+    y = 0
+
+    while True: 
+        x = random.randrange(0,vertical)
+        y = random.randrange(0,horizontal)
+
+        if store_map[0][x][y] == " ":
+            break
+    return x, y
+
+
+def reset_people(store_map, vertical, horizontal):
+    for x in range(vertical):
+        row = list(store_map[0][x])
+        for y in range(horizontal):
+            if row[y] == "!":
+                row[y] = " "
+        store_map[0][x] = "".join(row)
+
+
 def main():
     # 1, 設定ファイルからパラメータを取得
     config = load_config()
@@ -61,6 +83,12 @@ def main():
     # 8, 歩く(メインループ)
     with open(output_file_path, "a") as file:
         while status.shopping_cart.progress < status.shopping_cart.item_amount:
+            reset_people(status.store_map, config["vertical"], config["horizontal"])
+            for i in range(config["people"]):
+                x, y = get_random_position(status.store_map, config["vertical"], config["horizontal"])
+                row = list(status.store_map[0][x])
+                row[y] = "!"
+                status.store_map[0][x] = "".join(row)
             shopper.walk(file)
 
     # 9, 会計
