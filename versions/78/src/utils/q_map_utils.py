@@ -113,9 +113,3 @@ def update_all_q_map(status, next_direction):
 # 商品を見つけたときに最大のq値を与える
 def give_max_q_value(status, item_id, next_direction):
         status.q_map[item_id][next_direction][status.position.x][status.position.y] = 1000
-
-
-# マップ外のQマップを更新
-def downgrade_q_map(status, next_direction):
-    for i in range(len(status.shopping_list)):
-        status.q_map[i][next_direction][status.position.x][status.position.y] *= 0.9

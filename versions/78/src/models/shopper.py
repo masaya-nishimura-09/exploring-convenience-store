@@ -4,7 +4,7 @@ import random
 from operator import itemgetter
 from utils.io_utils import write_position_to_file
 from utils.display_utils import display_map
-from utils.q_map_utils import q_comparison, update_all_q_map, give_max_q_value, downgrade_q_map
+from utils.q_map_utils import q_comparison, update_all_q_map, give_max_q_value
 from utils.shopping_utils import item_checker
 
 
@@ -59,7 +59,7 @@ class Shopper:
         next_direction = get_next_direction(status)
         next_x, next_y = get_next_x_y(status, next_direction)
 
-        # 次の場所がマップの範囲外の時はqマップをダウングレード
+        # 次の場所がマップの範囲外の時は何もしない
         if not (
             next_x >= 0
             and next_y >= 0
@@ -105,11 +105,6 @@ class Shopper:
 
         # 次の場所に人がいるとき
         elif status.store_map[0][next_x][next_y] == "!":
-            status.wait_counter += 1
-            if status.wait_counter > 5:
-                status.wait_counter = 0
-                # 別の方向を試すために、Qマップをダウングレード
-                downgrade_q_map(status, next_direction)
             return
 
         # 次の場所に商品がある時
