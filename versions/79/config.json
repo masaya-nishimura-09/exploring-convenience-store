@@ -1,0 +1,8 @@
+{
+  "version": "79",
+  "vertical": 20,
+  "horizontal": 50,
+  "show_output": true,
+  "max_step": 50000,
+  "people": 8
+}
