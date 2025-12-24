@@ -12,5 +12,5 @@
   "runs_per_set": 100,
   "sets": 4,
   "max_step": 50000,
-  "people": 0
+  "people": 16
 }
